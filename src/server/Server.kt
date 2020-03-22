@@ -32,6 +32,7 @@ class Server(private val port: Int) : Thread() {
 
                     override fun onConnectionInterrupted() {
                         connectionList.remove(connection)
+                        println("Client disconnected: $connection")
                     }
                 }
                 connectionList.add(connection)

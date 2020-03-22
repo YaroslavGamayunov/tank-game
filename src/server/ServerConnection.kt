@@ -35,7 +35,6 @@ class ServerConnection(socket: Socket) {
                     var inputObject: ServerObject = inputStream.readObject() as ServerObject
                     connectionCallback?.onReceive(inputObject)
                 } catch (e: IOException) {
-                    e.printStackTrace()
                     connectionCallback?.onConnectionInterrupted()
                     break
                 }
