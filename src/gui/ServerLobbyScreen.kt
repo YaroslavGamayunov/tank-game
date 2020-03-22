@@ -7,7 +7,7 @@ import javax.swing.*
 
 class ServerLobbyScreen(hostName: String, port: Int) : JFrame(), GameStateListener {
     private var connectedPlayersListModel =
-        DefaultListModel<String>().apply { Font("Apple Casual", Font.PLAIN, 40) }
+            DefaultListModel<String>().apply { Font("Apple Casual", Font.PLAIN, 40) }
 
     init {
         contentPane.layout = BoxLayout(contentPane, BoxLayout.Y_AXIS)
@@ -26,7 +26,7 @@ class ServerLobbyScreen(hostName: String, port: Int) : JFrame(), GameStateListen
             alignmentX = Component.CENTER_ALIGNMENT
         })
 
-        var connectedPlayersList = JList<String>(connectedPlayersListModel)
+        var connectedPlayersList = JList(connectedPlayersListModel)
         add(connectedPlayersList)
 
         pack()
@@ -41,6 +41,6 @@ class ServerLobbyScreen(hostName: String, port: Int) : JFrame(), GameStateListen
 
     override fun onGameStateChanged(state: GameState) {
         connectedPlayersListModel.clear()
-        connectedPlayersListModel.addAll(state.players)
+        connectedPlayersListModel.addAll(state.players.map { player -> player.name })
     }
 }

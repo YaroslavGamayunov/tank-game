@@ -41,7 +41,7 @@ class Server(private val port: Int) : Thread() {
                 connection.connectionCallback = object : ServerConnectionCallback {
                     override fun onReceive(serverObject: ServerObject) {
                         println("Server received object $serverObject")
-                        if (serverObject.type == PacketType.CONNECTION_DATA) {
+                        if (serverObject.shouldBeShared) {
                             notifyAll(serverObject, except = connection)
                         }
                     }
@@ -51,7 +51,6 @@ class Server(private val port: Int) : Thread() {
                         println("Client disconnected: $connection")
                     }
                 }
-                connectionSet.add(connection)
             } catch (e: IOException) {
                 e.printStackTrace()
             }

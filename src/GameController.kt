@@ -1,9 +1,11 @@
 import game.GameModel
 import game.GameState
+import game.Player
 import gui.GameStateListener
 import gui.MainScreen
 import gui.ServerLobbyScreen
 import server.Server
+import server.ServerConnection
 import java.awt.event.WindowEvent
 import java.net.InetAddress
 import java.net.Socket
@@ -35,23 +37,27 @@ class GameController private constructor() {
 
     fun connectToServer(playerName: String, hostName: String, port: Int) {
         gameModel = GameModel(Socket(hostName, port))
-        gameModel!!.addPlayer(playerName)
-        screens.add(ServerLobbyScreen(hostName, port))
+        changeScreen(ServerLobbyScreen(hostName, port))
+        gameModel!!.addPlayer(Player(playerName))
     }
 
     fun hostServer(playerName: String, port: Int) {
         server = Server(port)
         val hostName = InetAddress.getLocalHost().hostAddress;
         gameModel = GameModel(Socket(hostName, port))
-        screens.add(ServerLobbyScreen(hostName, port))
-        gameModel!!.addPlayer(playerName)
+        changeScreen(ServerLobbyScreen(hostName, port))
+        gameModel!!.addPlayer(Player(playerName))
     }
 
-    fun changeGameState(state: GameState) {
+    fun onGameStateChanged(state: GameState) {
         for (screen in screens) {
             if (screen is GameStateListener) {
                 (screen as GameStateListener).onGameStateChanged(state)
             }
         }
+    }
+
+    fun notifyPlayerLeft(connection: ServerConnection) {
+
     }
 }

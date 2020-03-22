@@ -23,6 +23,8 @@ class ServerConnection(socket: Socket) {
         }
     }
 
+    fun getAddress() = socket.inetAddress
+
     fun sendData(serverObject: ServerObject) {
         outputStream.writeObject(serverObject)
         outputStream.flush()
