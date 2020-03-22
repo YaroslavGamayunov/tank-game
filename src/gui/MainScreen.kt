@@ -21,20 +21,21 @@ class MainScreen : JFrame() {
             preferredSize = Dimension(200, 50)
         }
 
-        var connectionHostNameField = JTextField()
-        var connectionPortField = JTextField()
-        var playerNameField = JTextField()
-        var serverJoinDialog = JPanel().apply {
-            layout = BoxLayout(this, BoxLayout.Y_AXIS)
-            add(JLabel("Aдрес сервера"))
-            add(connectionHostNameField)
-            add(JLabel("Порт"))
-            add(connectionPortField)
-            add(JLabel("Имя игрока"))
-            add(playerNameField)
-        }
-
         joinServerButton.addActionListener {
+
+            var connectionHostNameField = JTextField()
+            var connectionPortField = JTextField()
+            var playerNameField = JTextField()
+            var serverJoinDialog = JPanel().apply {
+                layout = BoxLayout(this, BoxLayout.Y_AXIS)
+                add(JLabel("Aдрес сервера"))
+                add(connectionHostNameField)
+                add(JLabel("Порт"))
+                add(connectionPortField)
+                add(JLabel("Имя игрока"))
+                add(playerNameField)
+            }
+
             var dialogResult = JOptionPane.showConfirmDialog(
                 null, serverJoinDialog,
                 "Подключение к серверу", JOptionPane.OK_CANCEL_OPTION
@@ -48,16 +49,19 @@ class MainScreen : JFrame() {
             }
         }
 
-        var hostPortField = JTextField()
-        var serverHostDialog = JPanel().apply {
-            layout = BoxLayout(this, BoxLayout.Y_AXIS)
-            add(JLabel("Порт"))
-            add(hostPortField)
-            add(JLabel("Имя игрока"))
-            add(playerNameField.apply { text = "" })
-        }
 
         createHostButton.addActionListener {
+            var hostPortField = JTextField()
+            var playerNameField = JTextField()
+            var serverHostDialog = JPanel().apply {
+                layout = BoxLayout(this, BoxLayout.Y_AXIS)
+                add(JLabel("Порт"))
+                add(hostPortField)
+                add(JLabel("Имя игрока"))
+                add(playerNameField)
+            }
+
+
             var dialogResult = JOptionPane.showConfirmDialog(
                 null, serverHostDialog,
                 "Cоздать сервер", JOptionPane.OK_CANCEL_OPTION
