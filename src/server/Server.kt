@@ -7,7 +7,7 @@ import java.net.ServerSocket
 class Server(private val port: Int) : Thread() {
 
     private lateinit var serverSocket: ServerSocket
-    var connectionList: ArrayList<ServerConnection> = ArrayList()
+    var connectionList: HashSet<ServerConnection> = HashSet()
 
 
     init {
@@ -28,6 +28,10 @@ class Server(private val port: Int) : Thread() {
                 connection.connectionCallback = object : ServerConnectionCallback {
                     override fun onReceive(serverObject: ServerObject) {
                         println("Server received object $serverObject")
+                    }
+
+                    override fun onConnectionInterrupted() {
+                        connectionList.remove(connection)
                     }
                 }
                 connectionList.add(connection)

@@ -36,6 +36,7 @@ class ServerConnection(socket: Socket) {
                     connectionCallback?.onReceive(inputObject)
                 } catch (e: IOException) {
                     e.printStackTrace()
+                    connectionCallback?.onConnectionInterrupted()
                     break
                 }
             }
