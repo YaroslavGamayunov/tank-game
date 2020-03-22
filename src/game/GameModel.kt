@@ -9,7 +9,7 @@ import java.net.Socket
 
 class GameModel(var socket: Socket) : ServerConnectionCallback {
     private var connection: ServerConnection = ServerConnection(socket)
-    private var state: GameState? = null
+    private var state: GameState = GameState()
 
 
     init {

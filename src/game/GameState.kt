@@ -1,3 +1,9 @@
 package game
 
-data class GameState(var players: ArrayList<String>)
+class GameState() {
+    var players = ArrayList<String>()
+
+    constructor(players: ArrayList<String>) : this() {
+        this.players = players
+    }
+}

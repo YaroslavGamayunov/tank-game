@@ -35,13 +35,16 @@ class MainScreen : JFrame() {
         }
 
         joinServerButton.addActionListener {
-            var dialogResult = JOptionPane.showConfirmDialog(null, serverJoinDialog,
-                    "Подключение к серверу", JOptionPane.OK_CANCEL_OPTION)
+            var dialogResult = JOptionPane.showConfirmDialog(
+                null, serverJoinDialog,
+                "Подключение к серверу", JOptionPane.OK_CANCEL_OPTION
+            )
             if (dialogResult == JOptionPane.OK_OPTION) {
                 GameController.instance.connectToServer(
-                        playerNameField.text,
-                        connectionHostNameField.text,
-                        connectionPortField.text.toInt())
+                    playerNameField.text,
+                    connectionHostNameField.text,
+                    connectionPortField.text.toInt()
+                )
             }
         }
 
@@ -50,13 +53,17 @@ class MainScreen : JFrame() {
             layout = BoxLayout(this, BoxLayout.Y_AXIS)
             add(JLabel("Порт"))
             add(hostPortField)
+            add(JLabel("Имя игрока"))
+            add(playerNameField.apply { text = "" })
         }
 
         createHostButton.addActionListener {
-            var dialogResult = JOptionPane.showConfirmDialog(null, serverHostDialog,
-                    "Cоздать сервер", JOptionPane.OK_CANCEL_OPTION)
+            var dialogResult = JOptionPane.showConfirmDialog(
+                null, serverHostDialog,
+                "Cоздать сервер", JOptionPane.OK_CANCEL_OPTION
+            )
             if (dialogResult == JOptionPane.OK_OPTION) {
-                GameController.instance.hostServer(hostPortField.text.toInt())
+                GameController.instance.hostServer(playerNameField.text, hostPortField.text.toInt())
             }
         }
 

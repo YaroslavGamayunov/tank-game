@@ -39,11 +39,12 @@ class GameController private constructor() {
         screens.add(ServerLobbyScreen(hostName, port))
     }
 
-    fun hostServer(port: Int) {
+    fun hostServer(playerName: String, port: Int) {
         server = Server(port)
         val hostName = InetAddress.getLocalHost().hostAddress;
         gameModel = GameModel(Socket(hostName, port))
         screens.add(ServerLobbyScreen(hostName, port))
+        gameModel!!.addPlayer(playerName)
     }
 
     fun changeGameState(state: GameState) {
