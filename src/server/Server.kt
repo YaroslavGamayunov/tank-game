@@ -20,8 +20,14 @@ class Server(private val port: Int) : Thread() {
         }
     }
 
-    private fun notifyAll(obj: ServerObject) {
+    /** Notifies all connections
+     * @param except Server connection that will not be notified
+     */
+    private fun notifyAll(obj: ServerObject, except: ServerConnection? = null) {
         for (connection in connectionSet) {
+            if (connection == except) {
+                continue
+            }
             connection.sendData(obj)
         }
     }
@@ -36,7 +42,7 @@ class Server(private val port: Int) : Thread() {
                     override fun onReceive(serverObject: ServerObject) {
                         println("Server received object $serverObject")
                         if (serverObject.type == PacketType.CONNECTION_DATA) {
-                            notifyAll(serverObject)
+                            notifyAll(serverObject, except = connection)
                         }
                     }
 

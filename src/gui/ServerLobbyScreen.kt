@@ -16,7 +16,12 @@ class ServerLobbyScreen(hostName: String, port: Int) : JFrame(), GameStateListen
             alignmentX = Component.CENTER_ALIGNMENT
         })
 
-        add(JLabel("Адрес сервера: $hostName порт: $port").apply {
+        add(JLabel("Адрес сервера: $hostName").apply {
+            font = Font("Apple Casual", Font.ITALIC, 18)
+            alignmentX = Component.CENTER_ALIGNMENT
+        })
+
+        add(JLabel("Порт: $port").apply {
             font = Font("Apple Casual", Font.ITALIC, 18)
             alignmentX = Component.CENTER_ALIGNMENT
         })
