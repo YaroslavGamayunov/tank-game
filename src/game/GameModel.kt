@@ -32,6 +32,7 @@ class GameModel(var socket: Socket) : ServerConnectionCallback {
     fun addPlayer(name: String) {
         state?.players?.add(name)
         if (state != null) {
+            connection.sendData(ServerObject(PacketType.CONNECTION_DATA, name))
             GameController.instance.changeGameState(state!!)
         }
     }
