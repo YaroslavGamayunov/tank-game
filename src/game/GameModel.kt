@@ -37,7 +37,7 @@ class GameModel(socket: Socket) : ServerConnectionCallback {
         GameController.instance.onGameStateChanged(state)
     }
 
-    fun removePlayer(playerId: String) {
+    private fun removePlayer(playerId: String) {
         state.players.remove(playerId)
         GameController.instance.onGameStateChanged(state)
     }

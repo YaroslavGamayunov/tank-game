@@ -42,25 +42,32 @@ class GameController private constructor() {
     fun hostServer(playerName: String, port: Int) {
         var processor = object : ServerIncomingPacketProcessor {
             var PlayerIdByAddr = HashMap<InetAddress, String>()
-            override fun onReceive(connection: ServerConnection, packet: ServerPacket): Boolean {
-                if (packet.type == PacketType.PLAYER_JOINED) {
-                    PlayerIdByAddr[connection.getAddress()] = (packet.payload as Player).id
-                }
+            var globalGameState = GameState()
+            override fun onReceive(connection: ServerConnection, packet: ServerPacket): ArrayList<ServerPacket> {
+                var packetsForSharing = ArrayList<ServerPacket>()
 
-//                if (packet.type == PacketType.PLAYER_LEFT) {
-//                    PlayerIdByAddr[connection.getAddress()]?.let { gameModel?.removePlayer(it) }
-//                }
-                return packet.shouldBeShared
+                if (packet.type == PacketType.PLAYER_JOINED) {
+                    var player = packet.payload as Player
+                    PlayerIdByAddr[connection.getAddress()] = (packet.payload as Player).id
+                    globalGameState.players?.put(player.id, player)
+                    packetsForSharing.add(ServerPacket(PacketType.GAME_STATE, globalGameState, true))
+                }
+                if (packet.shouldBeShared) {
+                    packetsForSharing.add(packet)
+                }
+                return packetsForSharing
             }
 
-            override fun onConnectionInterrupted(connection: ServerConnection): ServerPacket? {
+            override fun onConnectionInterrupted(connection: ServerConnection): ArrayList<ServerPacket> {
                 var disconnectedPlayerId: String? = PlayerIdByAddr[connection.getAddress()]
+                var packetsForSharing = ArrayList<ServerPacket>()
 
                 if (disconnectedPlayerId != null) {
                     PlayerIdByAddr.remove(connection.getAddress())
-                    return ServerPacket(PacketType.PLAYER_LEFT, disconnectedPlayerId, true)
+                    globalGameState.players?.remove(disconnectedPlayerId)
+                    packetsForSharing.add(ServerPacket(PacketType.GAME_STATE, globalGameState, true))
                 }
-                return null
+                return return packetsForSharing
             }
 
         }
