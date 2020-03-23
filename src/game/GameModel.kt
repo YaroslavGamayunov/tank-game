@@ -7,7 +7,7 @@ import server.ServerConnectionCallback
 import server.ServerObject
 import java.net.Socket
 
-class GameModel(var socket: Socket) : ServerConnectionCallback {
+class GameModel(socket: Socket) : ServerConnectionCallback {
     private var connection: ServerConnection = ServerConnection(socket)
     private var state: GameState = GameState()
 
@@ -32,7 +32,7 @@ class GameModel(var socket: Socket) : ServerConnectionCallback {
     fun addPlayer(player: Player) {
         state?.players?.add(player)
         if (state != null) {
-            connection.sendData(ServerObject(PacketType.PLAYER_JOINED, player.name, shouldBeShared = true))
+            connection.sendData(ServerObject(PacketType.PLAYER_JOINED, Player(player.name), shouldBeShared = true))
             GameController.instance.onGameStateChanged(state!!)
         }
     }

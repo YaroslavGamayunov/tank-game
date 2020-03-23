@@ -38,6 +38,7 @@ class Server(private val port: Int) : Thread() {
             try {
                 var socket = serverSocket.accept()
                 var connection = ServerConnection(socket)
+
                 connection.connectionCallback = object : ServerConnectionCallback {
                     override fun onReceive(serverObject: ServerObject) {
                         println("Server received object $serverObject")
@@ -51,6 +52,7 @@ class Server(private val port: Int) : Thread() {
                         println("Client disconnected: $connection")
                     }
                 }
+                connectionSet.add(connection)
             } catch (e: IOException) {
                 e.printStackTrace()
             }
