@@ -4,7 +4,7 @@ import java.io.*
 import java.net.InetAddress
 import java.net.ServerSocket
 
-class Server(port: Int) : Thread() {
+class Server(port: Int, private var packetProcessor: ServerIncomingPacketProcessor) : Thread() {
 
     private lateinit var serverSocket: ServerSocket
     var connectionSet: HashSet<ServerConnection> = HashSet()
@@ -42,14 +42,15 @@ class Server(port: Int) : Thread() {
                 connection.connectionCallback = object : ServerConnectionCallback {
                     override fun onReceive(serverPacket: ServerPacket) {
                         println("Server received object $serverPacket")
-                        if (serverPacket.shouldBeShared) {
+                        if (packetProcessor.onReceive(connection, serverPacket)) {
                             notifyAll(serverPacket, except = connection)
                         }
                     }
 
                     override fun onConnectionInterrupted() {
-                        connectionSet.remove(connection)
                         println("Client disconnected: $connection")
+                        connectionSet.remove(connection)
+                        packetProcessor.onConnectionInterrupted(connection)
                     }
                 }
                 connectionSet.add(connection)

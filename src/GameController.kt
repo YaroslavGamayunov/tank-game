@@ -4,9 +4,7 @@ import game.Player
 import gui.GameStateListener
 import gui.MainScreen
 import gui.ServerLobbyScreen
-import server.Server
-import server.ServerConnection
-import java.awt.event.WindowEvent
+import server.*
 import java.net.InetAddress
 import java.net.Socket
 import javax.swing.JFrame
@@ -42,7 +40,32 @@ class GameController private constructor() {
     }
 
     fun hostServer(playerName: String, port: Int) {
-        server = Server(port)
+        var processor = object : ServerIncomingPacketProcessor {
+            var PlayerIdByAddr = HashMap<InetAddress, String>()
+            override fun onReceive(connection: ServerConnection, packet: ServerPacket): Boolean {
+                if (packet.type == PacketType.PLAYER_JOINED) {
+                    PlayerIdByAddr[connection.getAddress()] = (packet.payload as Player).id
+                }
+
+//                if (packet.type == PacketType.PLAYER_LEFT) {
+//                    PlayerIdByAddr[connection.getAddress()]?.let { gameModel?.removePlayer(it) }
+//                }
+                return packet.shouldBeShared
+            }
+
+            override fun onConnectionInterrupted(connection: ServerConnection): ServerPacket? {
+                var disconnectedPlayerId: String? = PlayerIdByAddr[connection.getAddress()]
+
+                if (disconnectedPlayerId != null) {
+                    PlayerIdByAddr.remove(connection.getAddress())
+                    return ServerPacket(PacketType.PLAYER_LEFT, disconnectedPlayerId, true)
+                }
+                return null
+            }
+
+        }
+        server = Server(port, processor)
+
         val hostName = InetAddress.getLocalHost().hostAddress
         gameModel = GameModel(Socket(hostName, port))
         changeScreen(ServerLobbyScreen(hostName, port))
