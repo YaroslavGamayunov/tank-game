@@ -50,7 +50,14 @@ class Server(port: Int, private var packetProcessor: ServerIncomingPacketProcess
                     override fun onConnectionInterrupted() {
                         println("Client disconnected: $connection")
                         connectionSet.remove(connection)
-                        packetProcessor.onConnectionInterrupted(connection)
+
+                        // TODO redesign this, it's inappropriate
+                        var packet = packetProcessor.onConnectionInterrupted(connection)
+                        if (packet != null) {
+                            if (packet.shouldBeShared) {
+                                notifyAll(packet)
+                            }
+                        }
                     }
                 }
                 connectionSet.add(connection)

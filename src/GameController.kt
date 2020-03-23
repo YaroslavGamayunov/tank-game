@@ -79,8 +79,4 @@ class GameController private constructor() {
             }
         }
     }
-
-    fun notifyPlayerLeft(connection: ServerConnection) {
-
-    }
 }

@@ -19,14 +19,16 @@ class GameModel(socket: Socket) : ServerConnectionCallback {
     override fun onReceive(serverPacket: ServerPacket) {
         if (serverPacket.type == PacketType.GAME_STATE) {
             state = serverPacket.payload as GameState
-            GameController.instance.onGameStateChanged(state)
         }
         if (serverPacket.type == PacketType.PLAYER_JOINED) {
             var player: Player = serverPacket.payload as Player
             state.players?.put(player.id, player)
-
-            GameController.instance.onGameStateChanged(state)
         }
+        if (serverPacket.type == PacketType.PLAYER_LEFT) {
+            removePlayer(serverPacket.payload as String)
+        }
+
+        GameController.instance.onGameStateChanged(state)
     }
 
     fun addPlayer(player: Player) {
