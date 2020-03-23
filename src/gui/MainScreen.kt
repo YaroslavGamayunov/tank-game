@@ -79,7 +79,7 @@ class MainScreen : JFrame() {
         contentPane.preferredSize = Dimension(600, 600)
 
         pack()
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(null)
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
         isResizable = false
         isVisible = true

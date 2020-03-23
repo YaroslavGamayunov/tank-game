@@ -4,7 +4,7 @@ import java.io.*
 import java.net.InetAddress
 import java.net.ServerSocket
 
-class Server(private val port: Int) : Thread() {
+class Server(port: Int) : Thread() {
 
     private lateinit var serverSocket: ServerSocket
     var connectionSet: HashSet<ServerConnection> = HashSet()
@@ -12,7 +12,7 @@ class Server(private val port: Int) : Thread() {
 
     init {
         try {
-            serverSocket = ServerSocket(port);
+            serverSocket = ServerSocket(port)
             println("Starting server on ${InetAddress.getLocalHost().hostAddress}")
             start()
         } catch (e: IOException) {
