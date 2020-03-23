@@ -51,7 +51,7 @@ class Server(port: Int, private var packetProcessor: ServerIncomingPacketProcess
                     override fun onConnectionInterrupted() {
                         println("Client disconnected: $connection")
                         connectionSet.remove(connection)
-                        
+
                         packetProcessor.onConnectionInterrupted(connection)
                             .map { serverPacket -> notifyAll(serverPacket, except = connection) }
                     }
