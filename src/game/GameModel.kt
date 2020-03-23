@@ -22,19 +22,22 @@ class GameModel(socket: Socket) : ServerConnectionCallback {
             GameController.instance.onGameStateChanged(state)
         }
         if (serverPacket.type == PacketType.PLAYER_JOINED) {
-            state.players?.add(serverPacket.payload as Player)
-            if (state != null) {
-                GameController.instance.onGameStateChanged(state)
-            }
+            var player: Player = serverPacket.payload as Player
+            state.players?.put(player.id, player)
+
+            GameController.instance.onGameStateChanged(state)
         }
     }
 
     fun addPlayer(player: Player) {
-        state?.players?.add(player)
-        if (state != null) {
-            connection.sendData(ServerPacket(PacketType.PLAYER_JOINED, player, shouldBeShared = true))
-            GameController.instance.onGameStateChanged(state)
-        }
+        state.players?.put(player.id, player)
+        connection.sendData(ServerPacket(PacketType.PLAYER_JOINED, player, shouldBeShared = true))
+        GameController.instance.onGameStateChanged(state)
+    }
+
+    fun removePlayer(playerId: String) {
+        state.players.remove(playerId)
+        GameController.instance.onGameStateChanged(state)
     }
 
     override fun onConnectionInterrupted() {
