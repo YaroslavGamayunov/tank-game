@@ -24,8 +24,8 @@ class ServerConnection(socket: Socket) {
 
     fun getAddress() = socket.inetAddress
 
-    fun sendData(serverObject: ServerObject) {
-        outputStream.writeObject(serverObject)
+    fun sendData(serverPacket: ServerPacket) {
+        outputStream.writeObject(serverPacket)
         outputStream.flush()
     }
 
@@ -33,8 +33,8 @@ class ServerConnection(socket: Socket) {
         Thread {
             while (true) {
                 try {
-                    var inputObject: ServerObject = inputStream.readObject() as ServerObject
-                    connectionCallback?.onReceive(inputObject)
+                    var inputPacket: ServerPacket = inputStream.readObject() as ServerPacket
+                    connectionCallback?.onReceive(inputPacket)
                 } catch (e: IOException) {
                     connectionCallback?.onConnectionInterrupted()
                     break

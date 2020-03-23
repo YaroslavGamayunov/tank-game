@@ -23,7 +23,7 @@ class Server(port: Int) : Thread() {
     /** Notifies all connections
      * @param except Server connection that will not be notified
      */
-    private fun notifyAll(obj: ServerObject, except: ServerConnection? = null) {
+    private fun notifyAll(obj: ServerPacket, except: ServerConnection? = null) {
         for (connection in connectionSet) {
             if (connection == except) {
                 continue
@@ -40,10 +40,10 @@ class Server(port: Int) : Thread() {
                 var connection = ServerConnection(socket)
 
                 connection.connectionCallback = object : ServerConnectionCallback {
-                    override fun onReceive(serverObject: ServerObject) {
-                        println("Server received object $serverObject")
-                        if (serverObject.shouldBeShared) {
-                            notifyAll(serverObject, except = connection)
+                    override fun onReceive(serverPacket: ServerPacket) {
+                        println("Server received object $serverPacket")
+                        if (serverPacket.shouldBeShared) {
+                            notifyAll(serverPacket, except = connection)
                         }
                     }
 

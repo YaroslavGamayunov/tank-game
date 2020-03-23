@@ -4,7 +4,7 @@ import GameController
 import server.PacketType
 import server.ServerConnection
 import server.ServerConnectionCallback
-import server.ServerObject
+import server.ServerPacket
 import java.net.Socket
 
 class GameModel(socket: Socket) : ServerConnectionCallback {
@@ -16,13 +16,13 @@ class GameModel(socket: Socket) : ServerConnectionCallback {
         connection.connectionCallback = this
     }
 
-    override fun onReceive(serverObject: ServerObject) {
-        if (serverObject.type == PacketType.GAME_STATE) {
-            state = serverObject.obj as GameState
+    override fun onReceive(serverPacket: ServerPacket) {
+        if (serverPacket.type == PacketType.GAME_STATE) {
+            state = serverPacket.payload as GameState
             GameController.instance.onGameStateChanged(state)
         }
-        if (serverObject.type == PacketType.PLAYER_JOINED) {
-            state.players?.add(serverObject.obj as Player)
+        if (serverPacket.type == PacketType.PLAYER_JOINED) {
+            state.players?.add(serverPacket.payload as Player)
             if (state != null) {
                 GameController.instance.onGameStateChanged(state)
             }
@@ -32,7 +32,7 @@ class GameModel(socket: Socket) : ServerConnectionCallback {
     fun addPlayer(player: Player) {
         state?.players?.add(player)
         if (state != null) {
-            connection.sendData(ServerObject(PacketType.PLAYER_JOINED, player, shouldBeShared = true))
+            connection.sendData(ServerPacket(PacketType.PLAYER_JOINED, player, shouldBeShared = true))
             GameController.instance.onGameStateChanged(state)
         }
     }
