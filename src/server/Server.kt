@@ -42,18 +42,22 @@ class Server(port: Int, private var packetProcessor: ServerIncomingPacketProcess
                 connection.connectionCallback = object : ServerConnectionCallback {
                     override fun onReceive(serverPacket: ServerPacket) {
                         println("Server received object $serverPacket")
-
-                        packetProcessor.onReceive(connection, serverPacket)
-                            .map { serverPacket -> notifyAll(serverPacket, except = connection) }
-
+                        if (packetProcessor.onReceive(connection, serverPacket)) {
+                            notifyAll(serverPacket, except = connection)
+                        }
                     }
 
                     override fun onConnectionInterrupted() {
                         println("Client disconnected: $connection")
                         connectionSet.remove(connection)
 
-                        packetProcessor.onConnectionInterrupted(connection)
-                            .map { serverPacket -> notifyAll(serverPacket, except = connection) }
+                        // TODO redesign this, it's inappropriate
+                        var packet = packetProcessor.onConnectionInterrupted(connection)
+                        if (packet != null) {
+                            if (packet.shouldBeShared) {
+                                notifyAll(packet)
+                            }
+                        }
                     }
                 }
                 connectionSet.add(connection)

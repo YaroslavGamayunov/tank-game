@@ -2,13 +2,13 @@ package server
 
 interface ServerIncomingPacketProcessor {
     /**
-     * @return Packets to be shared to other clients
+     * @return If received Packet should be shared to other clients
      */
-    fun onReceive(connection: ServerConnection, packet: ServerPacket): ArrayList<ServerPacket>
+    fun onReceive(connection: ServerConnection, packet: ServerPacket) : Boolean
+
 
     /**
-     * @return Packets to be shared to other clients
+     * @return Packet that should be shared to other clients or null
      */
-    // TODO return list of commands to server
-    fun onConnectionInterrupted(connection: ServerConnection): ArrayList<ServerPacket>
+    fun onConnectionInterrupted(connection: ServerConnection) : ServerPacket?
 }

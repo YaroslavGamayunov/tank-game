@@ -43,31 +43,26 @@ class GameController private constructor() {
         var processor = object : ServerIncomingPacketProcessor {
             var PlayerIdByAddr = HashMap<InetAddress, String>()
             var globalGameState = GameState()
-            override fun onReceive(connection: ServerConnection, packet: ServerPacket): ArrayList<ServerPacket> {
-                var packetsForSharing = ArrayList<ServerPacket>()
+            override fun onReceive(connection: ServerConnection, packet: ServerPacket): Boolean {
 
                 if (packet.type == PacketType.PLAYER_JOINED) {
                     var player = packet.payload as Player
                     PlayerIdByAddr[connection.getAddress()] = (packet.payload as Player).id
                     globalGameState.players?.put(player.id, player)
-                    packetsForSharing.add(ServerPacket(PacketType.GAME_STATE, globalGameState, true))
                 }
-                if (packet.shouldBeShared) {
-                    packetsForSharing.add(packet)
-                }
-                return packetsForSharing
+
+                return packet.shouldBeShared
             }
 
-            override fun onConnectionInterrupted(connection: ServerConnection): ArrayList<ServerPacket> {
+            override fun onConnectionInterrupted(connection: ServerConnection): ServerPacket? {
                 var disconnectedPlayerId: String? = PlayerIdByAddr[connection.getAddress()]
-                var packetsForSharing = ArrayList<ServerPacket>()
 
                 if (disconnectedPlayerId != null) {
                     PlayerIdByAddr.remove(connection.getAddress())
                     globalGameState.players?.remove(disconnectedPlayerId)
-                    packetsForSharing.add(ServerPacket(PacketType.GAME_STATE, globalGameState, true))
+                    return ServerPacket(PacketType.PLAYER_LEFT, disconnectedPlayerId, true)
                 }
-                return return packetsForSharing
+                return null
             }
 
         }
