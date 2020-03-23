@@ -48,7 +48,8 @@ class GameController private constructor() {
                 if (packet.type == PacketType.PLAYER_JOINED) {
                     var player = packet.payload as Player
                     PlayerIdByAddr[connection.getAddress()] = (packet.payload as Player).id
-                    globalGameState.players?.put(player.id, player)
+                    globalGameState.players[player.id] = player
+                    connection.sendData(ServerPacket(PacketType.GAME_STATE, globalGameState))
                 }
 
                 return packet.shouldBeShared
@@ -59,13 +60,13 @@ class GameController private constructor() {
 
                 if (disconnectedPlayerId != null) {
                     PlayerIdByAddr.remove(connection.getAddress())
-                    globalGameState.players?.remove(disconnectedPlayerId)
+                    globalGameState.players.remove(disconnectedPlayerId)
                     return ServerPacket(PacketType.PLAYER_LEFT, disconnectedPlayerId, true)
                 }
                 return null
             }
-
         }
+
         server = Server(port, processor)
 
         val hostName = InetAddress.getLocalHost().hostAddress
