@@ -1,6 +1,5 @@
 package server
 
-import java.io.EOFException
 import java.io.IOException
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
@@ -23,8 +22,10 @@ class ServerConnection(socket: Socket) {
         }
     }
 
-    fun sendData(serverObject: ServerObject) {
-        outputStream.writeObject(serverObject)
+    fun getAddress() = socket.inetAddress
+
+    fun sendData(serverPacket: ServerPacket) {
+        outputStream.writeObject(serverPacket)
         outputStream.flush()
     }
 
@@ -32,8 +33,8 @@ class ServerConnection(socket: Socket) {
         Thread {
             while (true) {
                 try {
-                    var inputObject: ServerObject = inputStream.readObject() as ServerObject
-                    connectionCallback?.onReceive(inputObject)
+                    var inputPacket: ServerPacket = inputStream.readObject() as ServerPacket
+                    connectionCallback?.onReceive(inputPacket)
                 } catch (e: IOException) {
                     connectionCallback?.onConnectionInterrupted()
                     break

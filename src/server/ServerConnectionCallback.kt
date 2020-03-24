@@ -1,6 +1,6 @@
 package server
 
 interface ServerConnectionCallback {
-    fun onReceive(serverObject: ServerObject)
+    fun onReceive(serverPacket: ServerPacket)
     fun onConnectionInterrupted()
 }

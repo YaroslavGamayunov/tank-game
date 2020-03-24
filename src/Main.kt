@@ -1,5 +1,6 @@
+import gui.MainScreen
 import server.Server
 
 fun main() {
-    Server(4004)
+    GameController.instance
 }
