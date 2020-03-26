@@ -1,9 +1,7 @@
 package game.actions
 
 import game.Game
-import game.GameAction
-import game.GameActionSequence
-import game.Orientation
+import game.tools.Orientation
 
 class TurnTank(tankID: Int, val orientation: Orientation) : TankAction(tankID) {
     override fun invoke(visitor: IActionVisitor) {

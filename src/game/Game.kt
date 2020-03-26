@@ -1,9 +1,12 @@
 package game
 
+import game.actions.GameAction
+import game.objects.GameObject
+import game.objects.IIdentityProvider
 import java.io.Serializable
 import java.lang.RuntimeException
 
-class Game : Serializable, IIdentityProvider{
+class Game : Serializable, IIdentityProvider {
     val objects : ArrayList<GameObject> = arrayListOf()
     val actions : ArrayList<GameAction> = arrayListOf()
     var gameHasStarted = false

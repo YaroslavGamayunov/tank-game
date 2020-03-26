@@ -1,6 +1,6 @@
 package test
 
-import game.GameObject
+import game.objects.GameObject
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.ObjectInputStream

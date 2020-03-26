@@ -1,6 +1,5 @@
-package game
+package game.tools
 import java.io.Serializable
-import java.lang.RuntimeException
 import kotlin.math.abs
 
 data class Vector2(val x : Int, val y : Int) : Serializable{
@@ -8,11 +7,11 @@ data class Vector2(val x : Int, val y : Int) : Serializable{
         return "{$x,$y}"
     }
 
-    operator fun plus(other: Vector2) : Vector2{
+    operator fun plus(other: Vector2) : Vector2 {
         return Vector2(x + other.x, y + other.y)
     }
 
-    operator fun minus(other: Vector2) : Vector2{
+    operator fun minus(other: Vector2) : Vector2 {
         return Vector2(x - other.x, y - other.y)
     }
 

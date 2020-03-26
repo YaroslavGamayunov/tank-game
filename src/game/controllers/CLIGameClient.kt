@@ -1,5 +1,8 @@
-package game
+package game.controllers
 
+import game.Game
+import game.tools.Orientation
+import game.tools.Vector2
 import game.actions.*
 import java.lang.IllegalArgumentException
 import java.lang.IndexOutOfBoundsException
@@ -18,7 +21,7 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
         }
     }
 
-    override fun makeYourMove() : GameActionSequence{
+    override fun makeYourMove() : GameActionSequence {
         printLineToOutput("Your turn, mister...")
         printLineToOutput("Type 'act [action_name] [args]' to make action")
         printLineToOutput("Type 'end' to make your turn and send it to other players")
@@ -44,7 +47,9 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
                         "tank"->{
                             when(args[2]){
                                 "move"->{
-                                    action = MoveTank(args[3].toInt(), Vector2(args[4].toInt(), args[5].toInt()))
+                                    action = MoveTank(args[3].toInt(),
+                                        Vector2(args[4].toInt(), args[5].toInt())
+                                    )
                                 }
 
                                 "turn"->{

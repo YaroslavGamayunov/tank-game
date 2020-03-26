@@ -1,4 +1,8 @@
-package game
+package game.controllers
+
+import game.objects.IGamePlayerProperty
+import game.actions.GameActionSequence
+
 /*
 Created IGameClient must have server connector
  */

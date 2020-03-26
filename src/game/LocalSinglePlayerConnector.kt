@@ -1,6 +1,11 @@
 package game
 
 import game.actions.*
+import game.controllers.GamePlayer
+import game.controllers.IGameClient
+import game.controllers.IGameServerConnector
+import game.tools.Orientation
+import game.tools.Vector2
 import game.units.*
 
 class LocalSinglePlayerConnector : IGameServerConnector {
@@ -9,7 +14,7 @@ class LocalSinglePlayerConnector : IGameServerConnector {
 
     init {
          game.objects.add(GamePlayer(0))
-         game.objects.add(Tank(1,0,Vector2(0,0),8, Orientation.UP, 4, 2))
+         game.objects.add(Tank(1,0, Vector2(0, 0),8, Orientation.UP, 4, 2))
     }
 
     override fun getGameCopy(): Game {

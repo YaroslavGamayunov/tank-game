@@ -1,6 +1,6 @@
-package game
+package game.actions
 
-import game.actions.IActionVisitor
+import game.Game
 
 interface IGameAction {
     operator fun invoke(visitor: IActionVisitor)

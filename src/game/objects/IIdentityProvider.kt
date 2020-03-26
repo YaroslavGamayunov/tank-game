@@ -1,4 +1,6 @@
-package game
+package game.objects
+
+import game.objects.GameObject
 
 interface IIdentityProvider {
     fun getObjectByID(objectID : Int) : GameObject

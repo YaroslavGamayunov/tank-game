@@ -1,4 +1,6 @@
-package game
+package game.controllers
+
+import game.Game
 
 interface IGameServerConnector {
     fun getGameCopy() : Game

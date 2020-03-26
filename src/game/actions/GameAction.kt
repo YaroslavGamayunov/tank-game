@@ -1,8 +1,8 @@
-package game
+package game.actions
 
-import game.actions.IActionVisitor
+import game.Game
 
-open class GameAction : IGameAction{
+open class GameAction : IGameAction {
     override fun invoke(visitor: IActionVisitor) {
         visitor.onUnknownAction(this)
     }

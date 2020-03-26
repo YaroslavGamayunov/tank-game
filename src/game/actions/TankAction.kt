@@ -1,9 +1,7 @@
 package game.actions
 
 import game.Game
-import game.GameAction
-import game.GameActionSequence
-import game.IIdentityProvider
+import game.objects.IIdentityProvider
 import game.units.Tank
 
 abstract class TankAction(val tankID : Int) : GameAction() {

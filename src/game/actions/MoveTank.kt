@@ -1,7 +1,7 @@
 package game.actions
 
 import game.*
-import game.units.*
+import game.tools.Vector2
 
 class MoveTank(tankID : Int, val newPosition : Vector2) :TankAction(tankID) {
     override fun invoke(game: Game) {

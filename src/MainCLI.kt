@@ -1,4 +1,5 @@
 import game.*
+import game.controllers.CLIGameClient
 
 fun main(){
     val connector = LocalSinglePlayerConnector()

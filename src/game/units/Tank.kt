@@ -1,8 +1,7 @@
 package game.units
 
-import game.GameUnit
-import game.Orientation
-import game.Vector2
+import game.tools.Orientation
+import game.tools.Vector2
 
 open class Tank(objectID: Int, playerID: Int, position: Vector2, health: Int, orientation: Orientation,
                 val damage : Int, val moveDistance : Int) : GameUnit(objectID, playerID, position, health
