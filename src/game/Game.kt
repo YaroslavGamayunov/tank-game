@@ -7,6 +7,9 @@ class Game : Serializable, IIdentityProvider{
     val objects : ArrayList<GameObject> = arrayListOf()
     val actions : ArrayList<GameAction> = arrayListOf()
     var gameHasStarted = false
+    var gameIsOver = false
+    var currentMovePlayer = -1
+    var waitingForPlayerToMove = false
 
     override fun getObjectByID(objectID: Int): GameObject {
         for(x in objects){

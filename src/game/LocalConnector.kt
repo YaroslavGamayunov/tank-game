@@ -24,6 +24,15 @@ class LocalConnector : IGameServerConnector {
         val gameStarted = GameActionSequence(-1)
         gameStarted.actions.add(GameStarted())
         executeActionSequence(gameStarted)
+
+        while(!game.gameIsOver){
+            val newMove = GameActionSequence(-1)
+            newMove.actions.add(MoveBegin(0))
+            executeActionSequence(newMove)
+            executeActionSequence(client.makeYourMove())
+        }
+
+
     }
 
     private fun executeActionSequence(sequence: GameActionSequence){

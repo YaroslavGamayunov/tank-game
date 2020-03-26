@@ -11,8 +11,8 @@ open class GameAction : IGameAction{
         game.actions.add(this)
     }
 
-    override fun isCorrect(game: Game): Boolean {
-        return true;
+    override fun isCorrect(game: Game, sequence: GameActionSequence): Boolean {
+        return false;
     }
 
 }
