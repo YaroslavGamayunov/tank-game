@@ -1,5 +1,5 @@
 package game
 
 interface IGamePlayerProperty {
-    val owner : Player
+    val owner : GamePlayer
 }

@@ -2,7 +2,7 @@ import game.*
 import test.*
 
 fun main(){
-    println("CLI Tank game is launching.....")
-
-    //testSerializingGameObjectID()
+    val connector = LocalConnector()
+    val client = CLIGameClient(connector)
+    connector.runConnector(client)
 }
