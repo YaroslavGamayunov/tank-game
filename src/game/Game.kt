@@ -11,13 +11,14 @@ class Game : Serializable, IIdentityProvider{
     var currentMovePlayer = -1
     var waitingForPlayerToMove = false
 
+
+
     override fun getObjectByID(objectID: Int): GameObject {
         for(x in objects){
             if(x.objectID == objectID){
                 return x;
             }
         }
-
         throw RuntimeException("Can't find object with such ID" )
     }
 

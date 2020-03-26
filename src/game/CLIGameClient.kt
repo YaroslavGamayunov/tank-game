@@ -1,15 +1,28 @@
 package game
 
 import game.actions.*
+import java.lang.IllegalArgumentException
+import java.lang.IndexOutOfBoundsException
+import java.lang.NumberFormatException
+import kotlin.system.exitProcess
 
 class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IActionVisitor {
     val game : Game = server.getGameCopy()
     override val owner : GamePlayer = game.getObjectByID(server.getPlayerID()) as GamePlayer
 
+    init{
+        printLineToOutput("Starting CLI client.....")
+        printLineToOutput("List of provided game objects")
+        for(x in game.objects){
+            printLineToOutput("[Object ${x.objectID}] ${x.toString()}")
+        }
+    }
+
     override fun makeYourMove() : GameActionSequence{
         printLineToOutput("Your turn, mister...")
         printLineToOutput("Type 'act [action_name] [args]' to make action")
         printLineToOutput("Type 'end' to make your turn and send it to other players")
+        printLineToOutput("Type 'exit' to close application")
 
         val seq = GameActionSequence(owner.objectID)
 
@@ -18,20 +31,58 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
         while(waitForInput){
             val command = readLineFromInput()
             val args = command.split(' ')
-            if(args.isEmpty()) continue
+
+            try{
             when(args[0]){
                 "end" ->{
                     waitForInput = false
                     action = MoveEnd(owner.objectID)
                 }
+
+                "act"->{
+                    when(args[1]){
+                        "tank"->{
+                            when(args[2]){
+                                "move"->{
+                                    action = MoveTank(args[3].toInt(), Vector2(args[4].toInt(), args[5].toInt()))
+                                }
+
+                                "turn"->{
+                                    action = TurnTank(args[3].toInt(), Orientation.valueOf(args[4]))
+                                }
+                            }
+                        }
+                    }
+                }
+
+                "exit"->{
+                    printLineToOutput("Goodbye player. Didn't expect you to be so scared of battle. It seems to me tha" +
+                            "t you are not a real knight with brave heart. So sorry about it")
+                    exitProcess(0)
+                }
+            }
+            }
+            catch (ex : IndexOutOfBoundsException){
+               printErrorToOutput("Invalid command")
+            }
+            catch (ex : IllegalArgumentException){
+                printErrorToOutput("Invalid command")
+            }
+            catch (ex :NumberFormatException){
+                printErrorToOutput("Invalid command")
             }
 
 
+
             if(action!=null){
-                action(game)
-                action(this)
-                seq.actions.add(action)
-                action = null
+                if(action.isCorrect(game,seq)) {
+                    action(game)
+                    action(this)
+                    seq.actions.add(action)
+                    action = null
+                }else{
+                    printErrorToOutput("Incorrect action")
+                }
             }
         }
         return seq
@@ -55,6 +106,10 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
         println("[Client][Player ${owner.objectID}] $message" )
     }
 
+    private fun printErrorToOutput(message: String){
+        println("[ERROR] $message")
+    }
+
     override fun onUnknownAction(action: IGameAction) {
         printLineToOutput("Unknown action {${action.toString()}}")
     }
@@ -69,5 +124,13 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
 
     override fun onMoveEnd(action: MoveEnd) {
         printLineToOutput("Current move is over - [Player ${action.playerID}] made his move")
+    }
+
+    override fun onTankMove(action: MoveTank) {
+        printLineToOutput("Tank ${action.tankID} moved to ${action.newPosition}")
+    }
+
+    override fun onTankTurned(action: TurnTank) {
+        printLineToOutput("Tank ${action.tankID} turned to ${action.orientation.name}")
     }
 }

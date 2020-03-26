@@ -1,13 +1,15 @@
 package game
 
 import game.actions.*
+import game.units.*
 
-class LocalConnector : IGameServerConnector {
+class LocalSinglePlayerConnector : IGameServerConnector {
     lateinit var client: IGameClient
     val game : Game = Game()
 
     init {
          game.objects.add(GamePlayer(0))
+         game.objects.add(Tank(1,0,Vector2(0,0),8, Orientation.UP, 4, 2))
     }
 
     override fun getGameCopy(): Game {

@@ -3,12 +3,14 @@ package game
 open class GameUnit(
     override val objectID: Int,
              val playerID: Int,
-                 position: Vector2
-
+                 position: Vector2,
+                 health: Int
                     ) : GameObject(objectID), IGamePlayerProperty, IGameLocated {
 
     final override var position : Vector2 = position
-         protected set
+//        protected set
+    var health : Int = health
+        protected set
 
     @Transient
     override lateinit var owner : GamePlayer

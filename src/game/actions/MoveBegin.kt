@@ -8,6 +8,10 @@ class MoveBegin(val playerID : Int) : GameAction() {
         super.invoke(game)
         game.currentMovePlayer = playerID
         game.waitingForPlayerToMove = true
+
+        for(obj in game.objects){
+            obj.cleanOnNewMove()
+        }
     }
 
     override fun invoke(visitor: IActionVisitor) {

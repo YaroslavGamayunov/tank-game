@@ -9,4 +9,8 @@ open class GameObject(open val objectID : Int) : IGameObject {
             throw RuntimeException("Invalid IIdentityProvider: couldn't find me there or provided different instance")
         }
     }
+
+    override fun cleanOnNewMove() {
+
+    }
 }
