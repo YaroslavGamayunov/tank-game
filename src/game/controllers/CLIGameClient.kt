@@ -45,15 +45,20 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
                 "act"->{
                     when(args[1]){
                         "tank"->{
-                            when(args[2]){
+                            val tankID = args[2].toInt()
+                            when(args[3]){
                                 "move"->{
-                                    action = MoveTank(args[3].toInt(),
+                                    action = MoveTank(tankID,
                                         Vector2(args[4].toInt(), args[5].toInt())
                                     )
                                 }
 
-                                "turn"->{
-                                    action = TurnTank(args[3].toInt(), Orientation.valueOf(args[4]))
+                                "rotate"->{
+                                    action = RotateTank(tankID, Orientation.valueOf(args[4]))
+                                }
+
+                                "shoot"->{
+                                    action = TankShoot(tankID, args[4].toInt())
                                 }
                             }
                         }
@@ -77,18 +82,24 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
                 printErrorToOutput("Invalid command")
             }
 
-
-
+            if(action == null){
+                printErrorToOutput("Unknown action")
+            }
             if(action!=null){
-                if(action.isCorrect(game,seq)) {
+                try {
                     action(game)
                     action(this)
                     seq.actions.add(action)
+                }catch (ex : IllegalActionException){
+                    printErrorToOutput(ex.message?:"Some unknown illegal action")
+                }finally {
                     action = null
-                }else{
-                    printErrorToOutput("Incorrect action")
                 }
+
             }
+
+
+
         }
         return seq
     }
@@ -135,7 +146,11 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
         printLineToOutput("Tank ${action.tankID} moved to ${action.newPosition}")
     }
 
-    override fun onTankTurned(action: TurnTank) {
+    override fun onTankTurned(action: RotateTank) {
         printLineToOutput("Tank ${action.tankID} turned to ${action.orientation.name}")
+    }
+
+    override fun onTankShot(action: TankShoot) {
+        printLineToOutput("Tank ${action.tankID} shot to ${action.aimID}")
     }
 }

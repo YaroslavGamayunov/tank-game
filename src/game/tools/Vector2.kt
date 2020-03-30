@@ -18,6 +18,7 @@ data class Vector2(val x : Int, val y : Int) : Serializable{
     val orientation : Orientation?
         get(){
             val absolute = manhattanAbs
+            if(absolute == 0)return null
             val or = Vector2(x / absolute, y / absolute)
             for (x in Orientation.values()) {
                 if (x.direction == or) return x

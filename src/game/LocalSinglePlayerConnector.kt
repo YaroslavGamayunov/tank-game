@@ -14,7 +14,12 @@ class LocalSinglePlayerConnector : IGameServerConnector {
 
     init {
          game.objects.add(GamePlayer(0))
-         game.objects.add(Tank(1,0, Vector2(0, 0),8, Orientation.UP, 4, 2))
+         game.objects.add(Tank(1,0, Vector2(0, 0),8, Orientation.UP, 4U, 2))
+         game.objects.add(Tank(2,0, Vector2(1, 0),8, Orientation.UP, 4U, 2))
+
+         for(x in game.objects){
+             x.linkIdentifiers(game)
+         }
     }
 
     override fun getGameCopy(): Game {

@@ -6,5 +6,6 @@ interface IActionVisitor{
     fun onMoveStarted(action: MoveBegin)
     fun onMoveEnd(action: MoveEnd)
     fun onTankMove(action:MoveTank)
-    fun onTankTurned(action:TurnTank)
+    fun onTankTurned(action:RotateTank)
+    fun onTankShot(action: TankShoot)
 }

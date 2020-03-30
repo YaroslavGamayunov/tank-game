@@ -4,7 +4,5 @@ import game.Game
 
 interface IGameAction {
     operator fun invoke(visitor: IActionVisitor)
-    operator fun invoke(game : Game)
-    fun isCorrect(game: Game, sequence: GameActionSequence) : Boolean
-
+    operator fun invoke(game : Game, checkCorrectnessOnly : Boolean = false)
 }

@@ -20,6 +20,8 @@ open class GameUnit(
     var health : Int = health
         protected set
 
+    override val solid : Boolean = true
+
     @Transient
     override lateinit var owner : GamePlayer
          protected set
@@ -27,6 +29,11 @@ open class GameUnit(
     override fun linkIdentifiers(iIdentityProvider: IIdentityProvider) {
         super.linkIdentifiers(iIdentityProvider)
         owner = iIdentityProvider.getObjectByID(playerID) as GamePlayer
+    }
+
+    open fun applyDamage(damage : UInt, attacker : GameUnit){
+        health -= damage.toInt()
+        if(health < 0) health = 0;
     }
 
 

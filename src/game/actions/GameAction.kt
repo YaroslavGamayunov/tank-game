@@ -7,12 +7,8 @@ open class GameAction : IGameAction {
         visitor.onUnknownAction(this)
     }
 
-    override fun invoke(game: Game) {
-        game.actions.add(this)
-    }
-
-    override fun isCorrect(game: Game, sequence: GameActionSequence): Boolean {
-        return false;
+    override fun invoke(game: Game, checkCorrectnessOnly: Boolean) {
+        if(!checkCorrectnessOnly)game.addAction(this)
     }
 
 }
