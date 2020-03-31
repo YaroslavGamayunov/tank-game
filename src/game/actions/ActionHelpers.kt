@@ -72,3 +72,5 @@ fun Vector2.assertAndGetOrientation() = orientation?:throw IllegalTankMoveExcept
 
 fun Tank.assertHasShots() = if (tempShots + 1 > maxShots)
     throw IllegalAttackException("Tank $objectID has only $maxShots shots") else null
+
+

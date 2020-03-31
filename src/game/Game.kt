@@ -6,6 +6,7 @@ import game.actions.IllegalActionException
 import game.actions.WrongIdException
 import game.objects.*
 import game.tools.Vector2
+import game.tools.copySerializable
 import java.io.Serializable
 import java.lang.RuntimeException
 
@@ -41,6 +42,10 @@ class Game : Serializable, IIdentityProvider, IPositionProvider, IActionList {
         }
     }
 
+    override fun vacantID(): Int = (objects.maxBy { it.objectID }?.objectID?:0) + 1
+
+
+
     override fun getObjects(position: Vector2): List<IGameLocated> {
         val result = mutableListOf<IGameLocated>()
         for(x in objects){
@@ -61,6 +66,15 @@ class Game : Serializable, IIdentityProvider, IPositionProvider, IActionList {
 
     override fun addAction(action: IGameAction) {
         actions.add(action)
+    }
+
+    fun copy() : Game{
+        val game = copySerializable() as Game
+
+        for(x in game.objects){
+            x.linkIdentifiers(game)
+        }
+        return game
     }
 
 }

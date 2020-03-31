@@ -1,9 +1,8 @@
-package game
+package game.controllers
 
+import game.Game
 import game.actions.*
-import game.controllers.GamePlayer
-import game.controllers.IGameClient
-import game.controllers.IGameServerConnector
+import game.objects.GamePlayer
 import game.tools.Orientation
 import game.tools.Vector2
 import game.units.*

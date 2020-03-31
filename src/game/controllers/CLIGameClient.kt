@@ -7,6 +7,7 @@ import game.actions.*
 import game.events.IEventVisitor
 import game.events.IGameEvent
 import game.events.UnitDestroyed
+import game.objects.GamePlayer
 import java.lang.IllegalArgumentException
 import java.lang.IndexOutOfBoundsException
 import java.lang.NumberFormatException
@@ -120,13 +121,13 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
 
 
     override fun applyExternalActions(sequence: GameActionSequence) {
-        printLineToOutput("Action sequence has come owner = [Player ${sequence.playerID}]")
+      //  printLineToOutput("Action sequence has come owner = [Player ${sequence.playerID}]")
         for(action in sequence.actions){
             val event = action(game)
             action(this)
             processEventResult(event)
         }
-        printLineToOutput("End of action sequence")
+      //  printLineToOutput("End of action sequence")
 
     }
 
@@ -144,6 +145,10 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
 
     override fun onUnknownAction(action: IGameAction) {
         printLineToOutput("Unknown action {${action.toString()}}")
+    }
+
+    override fun onCreateObjects(action: ObjectsCreated) {
+        printLineToOutput("Created object ${action.obj.toString()}")
     }
 
     override fun onGameStarted(action: GameStarted) {

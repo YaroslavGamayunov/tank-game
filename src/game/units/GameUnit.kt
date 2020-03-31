@@ -1,6 +1,6 @@
 package game.units
 
-import game.controllers.GamePlayer
+import game.objects.GamePlayer
 import game.objects.GameObject
 import game.objects.IGameLocated
 import game.objects.IGamePlayerProperty

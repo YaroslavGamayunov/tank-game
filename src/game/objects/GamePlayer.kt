@@ -1,4 +1,4 @@
-package game.controllers
+package game.objects
 
 import game.objects.GameObject
 
