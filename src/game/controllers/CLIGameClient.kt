@@ -4,12 +4,15 @@ import game.Game
 import game.tools.Orientation
 import game.tools.Vector2
 import game.actions.*
+import game.events.IEventVisitor
+import game.events.IGameEvent
+import game.events.UnitDestroyed
 import java.lang.IllegalArgumentException
 import java.lang.IndexOutOfBoundsException
 import java.lang.NumberFormatException
 import kotlin.system.exitProcess
 
-class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IActionVisitor {
+class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IActionVisitor, IEventVisitor {
     val game : Game = server.getGameCopy()
     override val owner : GamePlayer = game.getObjectByID(server.getPlayerID()) as GamePlayer
 
@@ -87,9 +90,11 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
             }
             if(action!=null){
                 try {
-                    action(game)
+                    var event =  action(game)
                     action(this)
                     seq.actions.add(action)
+                    processEventResult(event)
+
                 }catch (ex : IllegalActionException){
                     printErrorToOutput(ex.message?:"Some unknown illegal action")
                 }finally {
@@ -104,11 +109,22 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
         return seq
     }
 
+    private fun processEventResult(initialEvent: IGameEvent?){
+        var event = initialEvent
+        while(event != null){
+            val next = event()
+            event(this)
+            event = next
+        }
+    }
+
+
     override fun applyExternalActions(sequence: GameActionSequence) {
         printLineToOutput("Action sequence has come owner = [Player ${sequence.playerID}]")
         for(action in sequence.actions){
-            action(game)
+            val event = action(game)
             action(this)
+            processEventResult(event)
         }
         printLineToOutput("End of action sequence")
 
@@ -152,5 +168,13 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
 
     override fun onTankShot(action: TankShoot) {
         printLineToOutput("Tank ${action.tankID} shot to ${action.aimID}")
+    }
+
+    override fun onUnknownEvent(event: IGameEvent) {
+        printLineToOutput("On unknown event ${event.toString()}")
+    }
+
+    override fun onUnitDestroyed(event: UnitDestroyed) {
+        printLineToOutput("Destroyed unit : ${event.unit.toString()}")
     }
 }

@@ -1,6 +1,8 @@
 package game.actions
 
 import game.*
+import game.events.ActionEvent
+import game.events.IGameEvent
 import game.tools.Orientation
 import game.tools.Vector2
 import game.tools.isVacantHalfInterval
@@ -9,7 +11,7 @@ class MoveTank(val tankID : Int, val newPosition : Vector2) : GameAction(){
         visitor.onTankMove(this)
     }
 
-    override fun invoke(game: Game, checkCorrectnessOnly: Boolean) {
+    override fun invoke(game: Game, checkCorrectnessOnly: Boolean) : IGameEvent? {
         val tank = game.getTank(tankID)
         tank.assertProperty(game.currentMovePlayer)
         tank.assertMovingToAnotherCell(newPosition)
@@ -20,8 +22,11 @@ class MoveTank(val tankID : Int, val newPosition : Vector2) : GameAction(){
         tank.assertMoveThroughEmptySpace(game, newPosition )
         super.invoke(game, checkCorrectnessOnly)
         if(!checkCorrectnessOnly){
-            tank.tempSteps += (newPosition - tank.position).manhattanAbs
-            tank.position = newPosition.copy()
+            return ActionEvent {
+                tank.tempSteps += (newPosition - tank.position).manhattanAbs
+                tank.position = newPosition.copy()
+            }
         }
+        return null
     }
 }

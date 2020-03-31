@@ -33,4 +33,10 @@ open class Tank(objectID: Int, playerID: Int, position: Vector2, health: Int, or
         return positionProvider.isVacantHalfInterval(this.position + orientation.direction,
             position, orientation)
     }
+
+    override fun toString(): String {
+        return "{[Tank] id: $objectID owner: ${owner.toString()}}"
+    }
+
+
 }

@@ -1,6 +1,8 @@
 package game.actions
 
 import game.Game
+import game.events.IGameEvent
+import game.events.UnitDestroyed
 import game.objects.IGamePlayerProperty
 import game.objects.IIdentityProvider
 import game.objects.IPositionProvider
@@ -57,9 +59,13 @@ fun Game.assertAttackAllowed(attacker : GameUnit, victim : GameUnit){
 fun Game.assertTankCanShootPosition(tank:Tank, pos: Vector2) = if(!tank.canShootPoint(pos,this))
     throw IllegalAttackException("Tank ${tank.objectID} can't shoot ${pos.toString()}") else null
 
-fun Game.applyDamage(victim : GameUnit, attacker: GameUnit, damage : UInt){
+fun Game.applyDamage(victim : GameUnit, attacker: GameUnit, damage : UInt) : IGameEvent?{
     victim.applyDamage(damage,attacker)
-    if(victim.health == 0)removeObjcetByID(victim.objectID)
+    if(victim.health == 0){
+        return UnitDestroyed(victim, this)
+    }
+
+    return null
 }
 
 fun Vector2.assertAndGetOrientation() = orientation?:throw IllegalTankMoveException("Cannot find direction")

@@ -1,13 +1,16 @@
 package game.actions
 
 import game.Game
+import game.events.ActionEvent
+import game.events.ComplexActionEvent
+import game.events.IGameEvent
 
 class TankShoot(val tankID: Int, val aimID : Int) : GameAction(){
     override fun invoke(visitor: IActionVisitor) {
         visitor.onTankShot(this)
     }
 
-    override fun invoke(game: Game, checkCorrectnessOnly: Boolean) {
+    override fun invoke(game: Game, checkCorrectnessOnly: Boolean) : IGameEvent?{
         val aim = game.getUnit(aimID)
         val tank = game.getTank(tankID)
         tank.assertHasShots()
@@ -16,8 +19,11 @@ class TankShoot(val tankID: Int, val aimID : Int) : GameAction(){
         game.assertTankCanShootPosition(tank, aim.position)
         super.invoke(game, checkCorrectnessOnly)
         if(!checkCorrectnessOnly){
-            game.applyDamage(aim,tank,tank.damage)
-            tank.tempShots += 1
+            return ComplexActionEvent {
+                tank.tempShots += 1
+                game.applyDamage(aim, tank, tank.damage)
+            }
         }
+        return null
     }
 }
