@@ -10,12 +10,13 @@ fun main(){
 
 fun runMultiplayer(){
     val server = LocalMultiplayerServer()
+
     
-    val connector1 = LocalMultiplayerConnector(server, Vector2(0,0))
+    val connector1 = LocalMultiplayerConnector(server, tankPosition = Vector2(0,0))
     val client1 = CLIGameClient(connector1)
     connector1.runConnector(client1)
 
-    val connector2 = LocalMultiplayerConnector(server, Vector2(10,0))
+    val connector2 = LocalMultiplayerConnector(server, tankPosition = Vector2(10,0))
     val client2 = CLIGameClient(connector2)
     connector2.runConnector(client2)
 

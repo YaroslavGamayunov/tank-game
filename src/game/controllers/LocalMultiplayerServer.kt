@@ -14,6 +14,10 @@ class LocalMultiplayerServer {
     private val game = Game()
     private val players = arrayListOf<Pair<GamePlayer, LocalMultiplayerConnector>>()
 
+    init{
+        game.friendlyFireAllowed = false
+    }
+
     fun gameCopy() = game.copy()
 
     fun connectPlayer(connector: LocalMultiplayerConnector, tankPosition: Vector2) : Int{
