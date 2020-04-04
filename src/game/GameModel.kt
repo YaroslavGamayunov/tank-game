@@ -17,32 +17,39 @@ class GameModel(socket: Socket) : ServerConnectionCallback {
     }
 
     override fun onReceive(serverPacket: ServerPacket) {
-        if (serverPacket.type == PacketType.GAME_STATE) {
-            state = serverPacket.payload as GameState
-        }
-        if (serverPacket.type == PacketType.PLAYER_JOINED) {
-            var player: Player = serverPacket.payload as Player
-            state.players?.put(player.id, player)
-        }
-        if (serverPacket.type == PacketType.PLAYER_LEFT) {
-            removePlayer(serverPacket.payload as String)
+        when (serverPacket.type) {
+            PacketType.GAME_STATE -> state = serverPacket.payload as GameState
+
+            PacketType.PLAYER_JOINED -> {
+                var player: Player = serverPacket.payload as Player
+                state.players[player.id] = player
+            }
+
+            PacketType.PLAYER_LEFT -> removePlayer(serverPacket.payload as String)
+
+            PacketType.PLAYER_MOVED -> applyPlayerActions(serverPacket.payload as ArrayList<PlayerAction>)
         }
 
+        GameController.instance.onGameStateChanged(state)
+    }
+
+    override fun onConnectionInterrupted() {}
+
+    fun applyPlayerActions(actions: ArrayList<PlayerAction>) {
+        for (action in actions) {
+            TODO("implement")
+        }
         GameController.instance.onGameStateChanged(state)
     }
 
     fun addPlayer(player: Player) {
-        state.players?.put(player.id, player)
+        state.players[player.id] = player
         connection.sendData(ServerPacket(PacketType.PLAYER_JOINED, player, shouldBeShared = true))
         GameController.instance.onGameStateChanged(state)
     }
 
-    private fun removePlayer(playerId: String) {
+    fun removePlayer(playerId: String) {
         state.players.remove(playerId)
         GameController.instance.onGameStateChanged(state)
-    }
-
-    override fun onConnectionInterrupted() {
-        TODO("Not yet implemented")
     }
 }

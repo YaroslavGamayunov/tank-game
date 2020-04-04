@@ -1,6 +1,7 @@
 package game
 
 import java.io.Serializable
+import java.math.BigInteger
 
 enum class GameStatus {
     LOBBY, ACTIVE
