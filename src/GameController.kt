@@ -26,7 +26,7 @@ class GameController private constructor() {
     private var server: Server? = null
 
     init {
-
+        println("GameController created")
     }
 
     private fun changeScreen(screen: JFrame) {
