@@ -1,0 +1,183 @@
+Here is a log of simple game to understand commands and how to play
+
+[Local Multiplayer Server] Player connected giving id = 1
+[Client][Player 1] Starting CLI client.....
+[Client][Player 1] List of provided game objects
+[Client][Player 1] [Object 1] {[Player] id: 1}
+[Client][Player 1] [Object 2] {[Tank] id: 2 owner: {[Player] id: 1}}
+[Local Multiplayer Server] Player connected giving id = 3
+[Client][Player 1] Created object {[Player] id: 3}
+[Client][Player 1] Created object {[Tank] id: 4 owner: {[Player] id: 3}}
+[Client][Player 3] Starting CLI client.....
+[Client][Player 3] List of provided game objects
+[Client][Player 3] [Object 1] {[Player] id: 1}
+[Client][Player 3] [Object 2] {[Tank] id: 2 owner: {[Player] id: 1}}
+[Client][Player 3] [Object 3] {[Player] id: 3}
+[Client][Player 3] [Object 4] {[Tank] id: 4 owner: {[Player] id: 3}}
+[Client][Player 1] Game started !!!! Are you ready for a real battle? xD :)
+[Client][Player 3] Game started !!!! Are you ready for a real battle? xD :)
+[Client][Player 1] Waiting for [Player 1] to make his move
+[Client][Player 3] Waiting for [Player 1] to make his move
+[Client][Player 1] Your turn, mister...
+[Client][Player 1] Type 'act [action_name] [args]' to make action
+[Client][Player 1] Type 'end' to make your turn and send it to other players
+[Client][Player 1] Type 'exit' to close application
+act tank move 0 4
+[ERROR] Invalid command
+[ERROR] Unknown action
+act tank 2 move 0 4
+[Client][Player 1] Tank 2 moved to {0,4}
+end
+[Client][Player 1] Current move is over - [Player 1] made his move
+[Client][Player 3] Tank 2 moved to {0,4}
+[Client][Player 3] Current move is over - [Player 1] made his move
+[Client][Player 1] Waiting for [Player 3] to make his move
+[Client][Player 3] Waiting for [Player 3] to make his move
+[Client][Player 3] Your turn, mister...
+[Client][Player 3] Type 'act [action_name] [args]' to make action
+[Client][Player 3] Type 'end' to make your turn and send it to other players
+[Client][Player 3] Type 'exit' to close application
+act tank 4 rotate DOWN
+[Client][Player 3] Tank 4 turned to DOWN
+act tank 4 move 0 46
+[ERROR] Cannot find direction
+act tank 4 move 46 0
+[ERROR] Moving only DOWN is currently allowed
+act tank 4 move 6 0
+[ERROR] Moving only DOWN is currently allowed
+act tank 4 move 0 6
+[ERROR] Cannot find direction
+act tank 4 move 6 0
+[ERROR] Moving only DOWN is currently allowed
+end
+[Client][Player 3] Current move is over - [Player 3] made his move
+[Client][Player 1] Tank 4 turned to DOWN
+[Client][Player 1] Current move is over - [Player 3] made his move
+[Client][Player 1] Waiting for [Player 1] to make his move
+[Client][Player 3] Waiting for [Player 1] to make his move
+[Client][Player 1] Your turn, mister...
+[Client][Player 1] Type 'act [action_name] [args]' to make action
+[Client][Player 1] Type 'end' to make your turn and send it to other players
+[Client][Player 1] Type 'exit' to close application
+act tank 2 move 0 8
+[Client][Player 1] Tank 2 moved to {0,8}
+end
+[Client][Player 1] Current move is over - [Player 1] made his move
+[Client][Player 3] Tank 2 moved to {0,8}
+[Client][Player 3] Current move is over - [Player 1] made his move
+[Client][Player 1] Waiting for [Player 3] to make his move
+[Client][Player 3] Waiting for [Player 3] to make his move
+[Client][Player 3] Your turn, mister...
+[Client][Player 3] Type 'act [action_name] [args]' to make action
+[Client][Player 3] Type 'end' to make your turn and send it to other players
+[Client][Player 3] Type 'exit' to close application
+act tank 2 move 0 9
+[ERROR] {[Tank] id: 2 owner: {[Player] id: 1}} is not [Player 3]'s property
+act tank 4 rotate LEFT
+[Client][Player 3] Tank 4 turned to LEFT
+act tank 4 move 0 8
+[ERROR] Cannot find direction
+act tank 4 move 0 0
+[ERROR] Only 4 steps allowed for [4] tank
+act tank 4 move 0 6
+[ERROR] Cannot find direction
+act tank 4 move 6 0
+[Client][Player 3] Tank 4 moved to {6,0}
+end
+[Client][Player 3] Current move is over - [Player 3] made his move
+[Client][Player 1] Tank 4 turned to LEFT
+[Client][Player 1] Tank 4 moved to {6,0}
+[Client][Player 1] Current move is over - [Player 3] made his move
+[Client][Player 1] Waiting for [Player 1] to make his move
+[Client][Player 3] Waiting for [Player 1] to make his move
+[Client][Player 1] Your turn, mister...
+[Client][Player 1] Type 'act [action_name] [args]' to make action
+[Client][Player 1] Type 'end' to make your turn and send it to other players
+[Client][Player 1] Type 'exit' to close application
+act tank 2 rotate DOWN
+[Client][Player 1] Tank 2 turned to DOWN
+act tank 2 move 0 4
+[Client][Player 1] Tank 2 moved to {0,4}
+end
+[Client][Player 1] Current move is over - [Player 1] made his move
+[Client][Player 3] Tank 2 turned to DOWN
+[Client][Player 3] Tank 2 moved to {0,4}
+[Client][Player 3] Current move is over - [Player 1] made his move
+[Client][Player 1] Waiting for [Player 3] to make his move
+[Client][Player 3] Waiting for [Player 3] to make his move
+[Client][Player 3] Your turn, mister...
+[Client][Player 3] Type 'act [action_name] [args]' to make action
+[Client][Player 3] Type 'end' to make your turn and send it to other players
+[Client][Player 3] Type 'exit' to close application
+act tank 4 move 4 0
+[Client][Player 3] Tank 4 moved to {4,0}
+act tank 4 move 2 0
+[Client][Player 3] Tank 4 moved to {2,0}
+end
+[Client][Player 3] Current move is over - [Player 3] made his move
+[Client][Player 1] Tank 4 moved to {4,0}
+[Client][Player 1] Tank 4 moved to {2,0}
+[Client][Player 1] Current move is over - [Player 3] made his move
+[Client][Player 1] Waiting for [Player 1] to make his move
+[Client][Player 3] Waiting for [Player 1] to make his move
+[Client][Player 1] Your turn, mister...
+[Client][Player 1] Type 'act [action_name] [args]' to make action
+[Client][Player 1] Type 'end' to make your turn and send it to other players
+[Client][Player 1] Type 'exit' to close application
+act tank 1 move 0 0
+[ERROR] Expected that [1] is Tank, but it isn't
+act tank 2 move 0 0
+[Client][Player 1] Tank 2 moved to {0,0}
+act tank 2 rotate RIGHT
+[Client][Player 1] Tank 2 turned to RIGHT
+act tank 2 shoot 4
+[Client][Player 1] Tank 2 shot to 4
+end
+[Client][Player 1] Current move is over - [Player 1] made his move
+[Client][Player 3] Tank 2 moved to {0,0}
+[Client][Player 3] Tank 2 turned to RIGHT
+[Client][Player 3] Tank 2 shot to 4
+[Client][Player 3] Current move is over - [Player 1] made his move
+[Client][Player 1] Waiting for [Player 3] to make his move
+[Client][Player 3] Waiting for [Player 3] to make his move
+[Client][Player 3] Your turn, mister...
+[Client][Player 3] Type 'act [action_name] [args]' to make action
+[Client][Player 3] Type 'end' to make your turn and send it to other players
+[Client][Player 3] Type 'exit' to close application
+act tank 4 shoot 2
+[Client][Player 3] Tank 4 shot to 2
+end
+[Client][Player 3] Current move is over - [Player 3] made his move
+[Client][Player 1] Tank 4 shot to 2
+[Client][Player 1] Current move is over - [Player 3] made his move
+[Client][Player 1] Waiting for [Player 1] to make his move
+[Client][Player 3] Waiting for [Player 1] to make his move
+[Client][Player 1] Your turn, mister...
+[Client][Player 1] Type 'act [action_name] [args]' to make action
+[Client][Player 1] Type 'end' to make your turn and send it to other players
+[Client][Player 1] Type 'exit' to close application
+act tank 2 shoot 4
+[Client][Player 1] Tank 2 shot to 4
+[Client][Player 1] Destroyed unit : {[Tank] id: 4 owner: {[Player] id: 3}}
+end
+[Client][Player 1] Current move is over - [Player 1] made his move
+[Client][Player 3] Tank 2 shot to 4
+[Client][Player 3] Destroyed unit : {[Tank] id: 4 owner: {[Player] id: 3}}
+[Client][Player 3] Current move is over - [Player 1] made his move
+[Client][Player 1] Waiting for [Player 3] to make his move
+[Client][Player 3] Waiting for [Player 3] to make his move
+[Client][Player 3] Your turn, mister...
+[Client][Player 3] Type 'act [action_name] [args]' to make action
+[Client][Player 3] Type 'end' to make your turn and send it to other players
+[Client][Player 3] Type 'exit' to close application
+end
+[Client][Player 3] Current move is over - [Player 3] made his move
+[Client][Player 1] Current move is over - [Player 3] made his move
+[Client][Player 1] Waiting for [Player 1] to make his move
+[Client][Player 3] Waiting for [Player 1] to make his move
+[Client][Player 1] Your turn, mister...
+[Client][Player 1] Type 'act [action_name] [args]' to make action
+[Client][Player 1] Type 'end' to make your turn and send it to other players
+[Client][Player 1] Type 'exit' to close application
+exit
+[Client][Player 1] Goodbye player. Didn't expect you to be so scared of battle. It seems to me that you are not a real knight with brave heart. So sorry about it
