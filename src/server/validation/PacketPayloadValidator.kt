@@ -13,7 +13,7 @@ private val PAYLOAD_MAP = mapOf<PacketType, KClass<*>>(
         PacketType.PLAYER_MOVED to GameState::class)
 
 class PacketPayloadMismatchException(packet: ServerPacket, throwable: Throwable? = null) :
-        Throwable("Server packet payload mismatch: found ${packet.payload::class}, " +
+        ServerPacketValidationException("Server packet payload mismatch: found ${packet.payload::class}, " +
                 "but expected ${PAYLOAD_MAP[packet.type]}", throwable)
 
 class PacketPayloadValidator : ServerPacketValidatorChainLink() {
