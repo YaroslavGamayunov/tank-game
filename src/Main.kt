@@ -1,8 +1,7 @@
-import gui.MainScreen
-import server.Server
-import test.testPacketValidation
+import game.actions.WrongIdException
+import server.validation.InvalidActionSequenceException
+import java.io.IOError
 
 fun main() {
-    testPacketValidation()
     GameController.instance
 }

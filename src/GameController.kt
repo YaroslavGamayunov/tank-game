@@ -34,6 +34,8 @@ class GameController private constructor() {
         screens.add(screen)
     }
 
+    fun getGameCopy() = gameModel?.getGameCopy()
+
     fun connectToServer(playerName: String, hostName: String, port: Int) {
         gameModel = GameModel(Socket(hostName, port))
         changeScreen(ServerLobbyScreen(hostName, port))

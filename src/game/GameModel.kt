@@ -1,6 +1,7 @@
 package game
 
 import GameController
+import game.actions.GameActionSequence
 import server.PacketType
 import server.ServerConnection
 import server.ServerConnectionCallback
@@ -9,8 +10,7 @@ import java.net.Socket
 
 class GameModel(socket: Socket) : ServerConnectionCallback {
     private var connection: ServerConnection = ServerConnection(socket)
-    private var state: GameState = GameState()
-
+    var state: GameState = GameState()
 
     init {
         connection.connectionCallback = this
@@ -27,7 +27,7 @@ class GameModel(socket: Socket) : ServerConnectionCallback {
 
             PacketType.PLAYER_LEFT -> removePlayer(serverPacket.payload as String)
 
-            PacketType.PLAYER_MOVED -> applyPlayerActions(serverPacket.payload as ArrayList<PlayerAction>)
+            PacketType.PLAYER_MOVED -> applyPlayerActions(serverPacket.payload as GameActionSequence)
         }
 
         GameController.instance.onGameStateChanged(state)
@@ -35,12 +35,15 @@ class GameModel(socket: Socket) : ServerConnectionCallback {
 
     override fun onConnectionInterrupted() {}
 
-    fun applyPlayerActions(actions: ArrayList<PlayerAction>) {
-        for (action in actions) {
+
+    fun applyPlayerActions(sequence: GameActionSequence) {
+        for (action in sequence.actions) {
             TODO("implement")
         }
         GameController.instance.onGameStateChanged(state)
     }
+
+    fun getGameCopy() = state.game.copy()
 
     fun addPlayer(player: Player) {
         state.players[player.id] = player

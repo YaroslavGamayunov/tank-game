@@ -4,20 +4,25 @@ import server.PacketType
 import server.ServerConnection
 import server.ServerIncomingPacketProcessor
 import server.ServerPacket
-import server.validation.GameStateValidator
+import server.validation.PlayerActionsValidator
 import server.validation.PacketPayloadValidator
+import server.validation.ServerPacketValidationException
 import server.validation.ServerPacketValidatorChain
-import server.validation.ServerPacketValidatorChainLink
 import java.net.InetAddress
 
 class GameServerProcessor() : ServerIncomingPacketProcessor {
-    private val validatorChain = ServerPacketValidatorChain(PacketPayloadValidator(), GameStateValidator())
+    private val validatorChain = ServerPacketValidatorChain(PacketPayloadValidator(), PlayerActionsValidator())
     private var playerIdByAddr = HashMap<InetAddress, String>()
     private var globalGameState = GameState()
 
 
     override fun onReceive(connection: ServerConnection, packet: ServerPacket): Boolean {
-        validatorChain.validate(packet)
+        try {
+            validatorChain.validate(packet)
+        } catch (e: ServerPacketValidationException) {
+            return false
+        }
+
         if (packet.type == PacketType.PLAYER_JOINED) {
             var player = packet.payload as Player
             playerIdByAddr[connection.getAddress()] = (packet.payload as Player).id
