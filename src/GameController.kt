@@ -1,4 +1,5 @@
 import game.GameModel
+import game.GameServerProcessor
 import game.GameState
 import game.Player
 import gui.GameStateListener
@@ -33,6 +34,8 @@ class GameController private constructor() {
         screens.add(screen)
     }
 
+    fun getGameCopy() = gameModel?.getGameCopy()
+
     fun connectToServer(playerName: String, hostName: String, port: Int) {
         gameModel = GameModel(Socket(hostName, port))
         changeScreen(ServerLobbyScreen(hostName, port))
@@ -40,34 +43,7 @@ class GameController private constructor() {
     }
 
     fun hostServer(playerName: String, port: Int) {
-        var processor = object : ServerIncomingPacketProcessor {
-            var PlayerIdByAddr = HashMap<InetAddress, String>()
-            var globalGameState = GameState()
-            override fun onReceive(connection: ServerConnection, packet: ServerPacket): Boolean {
-
-                if (packet.type == PacketType.PLAYER_JOINED) {
-                    var player = packet.payload as Player
-                    PlayerIdByAddr[connection.getAddress()] = (packet.payload as Player).id
-                    globalGameState.players[player.id] = player
-                    connection.sendData(ServerPacket(PacketType.GAME_STATE, globalGameState))
-                }
-
-                return packet.shouldBeShared
-            }
-
-            override fun onConnectionInterrupted(connection: ServerConnection): ServerPacket? {
-                var disconnectedPlayerId: String? = PlayerIdByAddr[connection.getAddress()]
-
-                if (disconnectedPlayerId != null) {
-                    PlayerIdByAddr.remove(connection.getAddress())
-                    globalGameState.players.remove(disconnectedPlayerId)
-                    return ServerPacket(PacketType.PLAYER_LEFT, disconnectedPlayerId, true)
-                }
-                return null
-            }
-        }
-
-        server = Server(port, processor)
+        server = Server(port, GameServerProcessor())
 
         val hostName = InetAddress.getLocalHost().hostAddress
         gameModel = GameModel(Socket(hostName, port))
