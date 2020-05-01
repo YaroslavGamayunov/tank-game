@@ -18,7 +18,7 @@ fun runGuiSinglePlayer(){
     val swingContext = SwingRenderingContext()
     val scene = RenderingScene<SwingRenderingContext>()
     scene.renderer = SwingSceneRenderer(scene)
-    val client = GUIClient<SwingRenderingContext>(connector, scene, swingContext, SwingRendererFactory())
+    val client = GUIClient<SwingRenderingContext>(connector, scene, swingContext)
     connector.runConnector(client)
 }
 

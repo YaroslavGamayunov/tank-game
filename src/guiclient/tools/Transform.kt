@@ -1,4 +1,4 @@
 package guiclient.tools
 
-data class Transform(val position: Vector3) {
+data class Transform(var position: Vector3, var scale: Vector3) {
 }

@@ -32,5 +32,5 @@ open abstract  class VisualObjectCompositor<Context : IRenderingContext> : IVisu
     }
 
     override val childs: ArrayList<IVisualObject<Context>> = arrayListOf()
-    override val transform : Transform = Transform(Vector3())
+    override val transform : Transform = Transform(Vector3(), Vector3(1.0,1.0,1.0))
 }

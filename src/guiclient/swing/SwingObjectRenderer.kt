@@ -5,5 +5,6 @@ import java.awt.Graphics
 
 interface SwingObjectRenderer :
     IVisualObjectRenderer<SwingRenderingContext> {
-    fun render(graphics: Graphics)
+    fun render(graphics: Graphics, canvas: SwingDefaultCamera)
+
 }

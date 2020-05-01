@@ -9,12 +9,12 @@ import kotlin.concurrent.thread
 
 class GUIClient<RenderingContext : IRenderingContext>(server: IGameServerConnector,
                                                       private val scene : RenderingScene<RenderingContext>,
-                                                      private val context: RenderingContext,
-                                                      private val factory: IRendererFactory<RenderingContext>
+                                                      private val context: RenderingContext
                                                       )
     : GameClient(server) {
 
     private val renderingThread : Thread
+    private val factory: IRendererFactory<RenderingContext>
     private var onRender = true
     init {
         context.initContext()
@@ -29,7 +29,7 @@ class GUIClient<RenderingContext : IRenderingContext>(server: IGameServerConnect
             }
             scene.destroy()
         }
-
+        factory = context.factory as IRendererFactory<RenderingContext>
         scene.childs.add(Sprite<RenderingContext>(factory, "grass.jpg"))
     }
 
