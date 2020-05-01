@@ -36,10 +36,17 @@ class GameController private constructor() {
 
     fun getGameCopy() = gameModel?.getGameCopy()
 
+    // These 3 methods below are designed for connecting and hosting server by local user
     fun connectToServer(playerName: String, hostName: String, port: Int) {
         gameModel = GameModel(Socket(hostName, port))
         changeScreen(ServerLobbyScreen(hostName, port))
-        gameModel!!.addPlayer(Player(playerName))
+        gameModel!!.addPlayer(Player(playerName), isLocalPlayer = true)
+    }
+
+    fun connectToServer(playerName: String, socket: Socket) {
+        gameModel = GameModel(socket)
+        changeScreen(ServerLobbyScreen(socket.inetAddress.toString(), socket.port))
+        gameModel!!.addPlayer(Player(playerName), isLocalPlayer = true)
     }
 
     fun hostServer(playerName: String, port: Int) {
@@ -48,7 +55,7 @@ class GameController private constructor() {
         val hostName = InetAddress.getLocalHost().hostAddress
         gameModel = GameModel(Socket(hostName, port))
         changeScreen(ServerLobbyScreen(hostName, port))
-        gameModel!!.addPlayer(Player(playerName))
+        gameModel!!.addPlayer(Player(playerName), isLocalPlayer = true)
     }
 
     fun onGameStateChanged(state: GameState) {

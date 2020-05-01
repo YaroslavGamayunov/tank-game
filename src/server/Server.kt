@@ -24,9 +24,9 @@ class Server(port: Int, private var packetProcessor: ServerIncomingPacketProcess
     /** Notifies all connections
      * @param except Server connection that will not be notified
      */
-    private fun notifyAll(obj: ServerPacket, except: ServerConnection? = null) {
+    private fun notifyAll(obj: ServerPacket, except: ArrayList<ServerConnection>) {
         for (connection in connectionSet) {
-            if (connection == except) {
+            if (connection in except) {
                 continue
             }
             connection.sendData(obj)
@@ -43,8 +43,12 @@ class Server(port: Int, private var packetProcessor: ServerIncomingPacketProcess
                 connection.connectionCallback = object : ServerConnectionCallback {
                     override fun onReceive(serverPacket: ServerPacket) {
                         println("Server received object $serverPacket")
-                        if (packetProcessor.onReceive(connection, serverPacket)) {
-                            notifyAll(serverPacket, except = connection)
+
+                        var packetsForSharing: List<BroadcastPacketWrapper> =
+                                packetProcessor.onReceive(connection, serverPacket)
+
+                        for (broadcastWrapper in packetsForSharing) {
+                            notifyAll(broadcastWrapper.serverPacket, broadcastWrapper.connectionBlackList)
                         }
                     }
 
@@ -52,12 +56,11 @@ class Server(port: Int, private var packetProcessor: ServerIncomingPacketProcess
                         println("Client disconnected: $connection")
                         connectionSet.remove(connection)
 
-                        // TODO redesign this, it's inappropriate
-                        var packet = packetProcessor.onConnectionInterrupted(connection)
-                        if (packet != null) {
-                            if (packet.shouldBeShared) {
-                                notifyAll(packet)
-                            }
+                        var packetsForSharing: List<BroadcastPacketWrapper> =
+                                packetProcessor.onConnectionInterrupted(connection)
+
+                        for (broadcastWrapper in packetsForSharing) {
+                            notifyAll(broadcastWrapper.serverPacket, broadcastWrapper.connectionBlackList)
                         }
                     }
                 }

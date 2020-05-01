@@ -1,14 +1,14 @@
 package game
 
-import server.PacketType
-import server.ServerConnection
-import server.ServerIncomingPacketProcessor
-import server.ServerPacket
+import server.*
 import server.validation.PlayerActionsValidator
 import server.validation.PacketPayloadValidator
 import server.validation.ServerPacketValidationException
 import server.validation.ServerPacketValidatorChain
 import java.net.InetAddress
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class GameServerProcessor() : ServerIncomingPacketProcessor {
     private val validatorChain = ServerPacketValidatorChain(PacketPayloadValidator(), PlayerActionsValidator())
@@ -16,11 +16,11 @@ class GameServerProcessor() : ServerIncomingPacketProcessor {
     private var globalGameState = GameState()
 
 
-    override fun onReceive(connection: ServerConnection, packet: ServerPacket): Boolean {
+    override fun onReceive(connection: ServerConnection, packet: ServerPacket): List<BroadcastPacketWrapper> {
         try {
             validatorChain.validate(packet)
         } catch (e: ServerPacketValidationException) {
-            return false
+            return ArrayList();
         }
 
         if (packet.type == PacketType.PLAYER_JOINED) {
@@ -30,17 +30,25 @@ class GameServerProcessor() : ServerIncomingPacketProcessor {
             connection.sendData(ServerPacket(PacketType.GAME_STATE, globalGameState))
         }
 
-        return packet.shouldBeShared
+        if (packet.shouldBeShared) {
+            var blackList = ArrayList(listOf(connection))
+            return listOf(BroadcastPacketWrapper(packet, blackList))
+        }
+        return listOf()
     }
 
-    override fun onConnectionInterrupted(connection: ServerConnection): ServerPacket? {
+    override fun onConnectionInterrupted(connection: ServerConnection): List<BroadcastPacketWrapper> {
         var disconnectedPlayerId: String? = playerIdByAddr[connection.getAddress()]
 
         if (disconnectedPlayerId != null) {
             playerIdByAddr.remove(connection.getAddress())
             globalGameState.players.remove(disconnectedPlayerId)
-            return ServerPacket(PacketType.PLAYER_LEFT, disconnectedPlayerId, true)
+
+            var packet = ServerPacket(PacketType.PLAYER_LEFT, disconnectedPlayerId, true)
+            var blackList = ArrayList(listOf(connection))
+
+            return listOf(BroadcastPacketWrapper(packet, blackList))
         }
-        return null
+        return listOf()
     }
 }

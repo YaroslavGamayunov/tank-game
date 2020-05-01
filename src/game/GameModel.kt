@@ -11,6 +11,7 @@ import java.net.Socket
 class GameModel(socket: Socket) : ServerConnectionCallback {
     private var connection: ServerConnection = ServerConnection(socket)
     var state: GameState = GameState()
+    var localPlayer: Player? = null
 
     init {
         connection.connectionCallback = this
@@ -43,9 +44,12 @@ class GameModel(socket: Socket) : ServerConnectionCallback {
         GameController.instance.onGameStateChanged(state)
     }
 
-    fun getGameCopy() = state.game.copy()
+    fun getGameCopy() = state.game?.copy()
 
-    fun addPlayer(player: Player) {
+    fun addPlayer(player: Player, isLocalPlayer: Boolean = false) {
+        if (isLocalPlayer) {
+            localPlayer = player
+        }
         state.players[player.id] = player
         connection.sendData(ServerPacket(PacketType.PLAYER_JOINED, player, shouldBeShared = true))
         GameController.instance.onGameStateChanged(state)
