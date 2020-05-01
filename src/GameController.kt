@@ -22,7 +22,7 @@ class GameController private constructor() {
 
     private var screens = arrayListOf<JFrame>(MainScreen())
 
-    private var gameModel: GameModel? = null
+    var gameModel: GameModel? = null
     private var server: Server? = null
 
     init {

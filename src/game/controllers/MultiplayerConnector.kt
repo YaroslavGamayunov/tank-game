@@ -17,20 +17,18 @@ class MultiplayerConnector(socket: Socket, playerName: String) : IGameServerConn
         GameController.instance.connectToServer(playerName, socket)
     }
 
-    var gameModel: GameModel = GameModel(socket)
-
     override fun getGameCopy(): Game {
-        var gameCopy = gameModel.getGameCopy()
+        var gameCopy = GameController.instance.gameModel?.getGameCopy()
 
         if (gameCopy == null) {
-            throw ServerDataNotReceivedException("Game instance hasn't been received by client yet");
+            throw ServerDataNotReceivedException("Game instance hasn't been received by client yet")
         }
 
         return gameCopy
     }
 
     override fun getPlayerID(): Int {
-        var id: Int? = gameModel.localPlayer?.localPlayerInstance?.objectID
+        var id: Int? = GameController.instance.gameModel?.localPlayer?.localPlayerInstance?.objectID
 
         if (id == null) {
             throw ServerDataNotReceivedException("Player ID hasn't been received by client yet")
@@ -41,6 +39,5 @@ class MultiplayerConnector(socket: Socket, playerName: String) : IGameServerConn
 
     override fun runConnector(client: IGameClient) {
         this.client = client
-        // TODO Implement
     }
 }

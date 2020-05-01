@@ -15,13 +15,14 @@ class GameServerProcessor() : ServerIncomingPacketProcessor {
     private val validatorChain = ServerPacketValidatorChain(PacketPayloadValidator(), PlayerActionsValidator())
     private var playerIdByAddr = HashMap<InetAddress, String>()
     private var globalGameState = GameState().apply { game = Game() }
+    private var fieldManager = GameFieldManager(globalGameState.game!!)
 
 
     override fun onReceive(connection: ServerConnection, packet: ServerPacket): List<BroadcastPacketWrapper> {
         try {
             validatorChain.validate(packet)
         } catch (e: ServerPacketValidationException) {
-            return ArrayList();
+            return listOf()
         }
 
         if (packet.type == PacketType.PLAYER_JOINED) {
@@ -29,10 +30,11 @@ class GameServerProcessor() : ServerIncomingPacketProcessor {
             playerIdByAddr[connection.getAddress()] = (packet.payload as Player).id
             globalGameState.players[player.id] = player
 
-            player.localPlayerInstance = GamePlayer(globalGameState.game!!.vacantID())
+            player.localPlayerInstance = fieldManager.createLocalPlayer()
 
-            globalGameState.game!!.objects.add(player.localPlayerInstance!!)
+            fieldManager.onPlayerConnected(player.localPlayerInstance!!)
 
+            // TODO: Fix, Error can be here
             connection.sendData(ServerPacket(PacketType.GAME_STATE, globalGameState))
         }
 

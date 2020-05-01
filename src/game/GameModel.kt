@@ -45,8 +45,9 @@ class GameModel(socket: Socket) : ServerConnectionCallback {
 
 
     fun applyPlayerActions(sequence: GameActionSequence) {
+        var game: Game = state.game ?: return
         for (action in sequence.actions) {
-            TODO("implement")
+            action(game)
         }
         GameController.instance.onGameStateChanged(state)
     }
