@@ -3,9 +3,23 @@ import game.controllers.CLIGameClient
 import game.controllers.LocalMultiplayerConnector
 import game.controllers.LocalMultiplayerServer
 import game.tools.Vector2
+import guiclient.GUIClient
+import guiclient.RenderingScene
+import guiclient.swing.SwingRendererFactory
+import guiclient.swing.SwingRenderingContext
+import guiclient.swing.SwingSceneRenderer
 
 fun main(){
-    runMultiplayer()
+    runGuiSinglePlayer()
+}
+
+fun runGuiSinglePlayer(){
+    val connector = LocalSinglePlayerConnector()
+    val swingContext = SwingRenderingContext()
+    val scene = RenderingScene<SwingRenderingContext>()
+    scene.renderer = SwingSceneRenderer(scene)
+    val client = GUIClient<SwingRenderingContext>(connector, scene, swingContext, SwingRendererFactory())
+    connector.runConnector(client)
 }
 
 fun runMultiplayer(){

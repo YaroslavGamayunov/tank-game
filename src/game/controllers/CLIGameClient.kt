@@ -13,10 +13,7 @@ import java.lang.IndexOutOfBoundsException
 import java.lang.NumberFormatException
 import kotlin.system.exitProcess
 
-class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IActionVisitor, IEventVisitor {
-    val game : Game = server.getGameCopy()
-    override val owner : GamePlayer = game.getObjectByID(server.getPlayerID()) as GamePlayer
-
+class CLIGameClient(server: IGameServerConnector) : GameClient(server), IActionVisitor, IEventVisitor {
     init{
         printLineToOutput("Starting CLI client.....")
         printLineToOutput("List of provided game objects")
@@ -121,13 +118,11 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
 
 
     override fun applyExternalActions(sequence: GameActionSequence) {
-      //  printLineToOutput("Action sequence has come owner = [Player ${sequence.playerID}]")
         for(action in sequence.actions){
             val event = action(game)
             action(this)
             processEventResult(event)
         }
-      //  printLineToOutput("End of action sequence")
 
     }
 
