@@ -1,5 +1,6 @@
 package game
 
+import game.objects.GamePlayer
 import server.*
 import server.validation.PlayerActionsValidator
 import server.validation.PacketPayloadValidator
@@ -13,7 +14,7 @@ import kotlin.collections.HashMap
 class GameServerProcessor() : ServerIncomingPacketProcessor {
     private val validatorChain = ServerPacketValidatorChain(PacketPayloadValidator(), PlayerActionsValidator())
     private var playerIdByAddr = HashMap<InetAddress, String>()
-    private var globalGameState = GameState()
+    private var globalGameState = GameState().apply { game = Game() }
 
 
     override fun onReceive(connection: ServerConnection, packet: ServerPacket): List<BroadcastPacketWrapper> {
@@ -27,6 +28,9 @@ class GameServerProcessor() : ServerIncomingPacketProcessor {
             var player = packet.payload as Player
             playerIdByAddr[connection.getAddress()] = (packet.payload as Player).id
             globalGameState.players[player.id] = player
+
+            player.localPlayerInstance = GamePlayer(globalGameState.game!!.vacantID())
+
             connection.sendData(ServerPacket(PacketType.GAME_STATE, globalGameState))
         }
 

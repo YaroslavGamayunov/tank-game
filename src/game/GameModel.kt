@@ -2,6 +2,7 @@ package game
 
 import GameController
 import game.actions.GameActionSequence
+import game.objects.GamePlayer
 import server.PacketType
 import server.ServerConnection
 import server.ServerConnectionCallback
@@ -19,7 +20,13 @@ class GameModel(socket: Socket) : ServerConnectionCallback {
 
     override fun onReceive(serverPacket: ServerPacket) {
         when (serverPacket.type) {
-            PacketType.GAME_STATE -> state = serverPacket.payload as GameState
+            PacketType.GAME_STATE -> {
+                state = serverPacket.payload as GameState
+
+                if (localPlayer != null) {
+                    localPlayer = state.players[localPlayer?.id]
+                }
+            }
 
             PacketType.PLAYER_JOINED -> {
                 var player: Player = serverPacket.payload as Player
