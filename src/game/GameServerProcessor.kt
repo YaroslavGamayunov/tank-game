@@ -30,6 +30,7 @@ class GameServerProcessor() : ServerIncomingPacketProcessor {
             globalGameState.players[player.id] = player
 
             player.localPlayerInstance = GamePlayer(globalGameState.game!!.vacantID())
+            globalGameState.game!!.objects.add(player.localPlayerInstance!!)
 
             connection.sendData(ServerPacket(PacketType.GAME_STATE, globalGameState))
         }

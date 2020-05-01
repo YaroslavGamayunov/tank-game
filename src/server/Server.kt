@@ -24,7 +24,7 @@ class Server(port: Int, private var packetProcessor: ServerIncomingPacketProcess
     /** Notifies all connections
      * @param except Server connection that will not be notified
      */
-    private fun notifyAll(obj: ServerPacket, except: ArrayList<ServerConnection>) {
+    private fun notifyAll(obj: ServerPacket, except: List<ServerConnection>) {
         for (connection in connectionSet) {
             if (connection in except) {
                 continue
