@@ -1,16 +1,15 @@
 package game
 
 import java.io.Serializable
-import java.math.BigInteger
 
 enum class GameStatus {
     LOBBY, ACTIVE
 }
 
 class GameState() : Serializable {
-    lateinit var status: GameStatus
+    var status: GameStatus = GameStatus.LOBBY
     var players = HashMap<String, Player>()
-    var game : Game? = null
+    var game: Game? = null
 
     constructor(players: ArrayList<Player>, gameStatus: GameStatus = GameStatus.LOBBY) : this() {
         this.players.putAll(players.map { player -> player.id to player })
