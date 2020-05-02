@@ -1,10 +1,6 @@
 package game.controllers
 
 import game.Game
-import game.GameModel
-import server.ServerConnection
-import server.ServerConnectionCallback
-import server.ServerPacket
 import java.net.Socket
 
 class ServerDataNotReceivedException(message: String) : Throwable(message)
@@ -18,7 +14,7 @@ class MultiplayerConnector(socket: Socket, playerName: String) : IGameServerConn
     }
 
     override fun getGameCopy(): Game {
-        var gameCopy = GameController.instance.gameModel?.getGameCopy()
+        var gameCopy = GameController.instance.getGameCopy()
 
         if (gameCopy == null) {
             throw ServerDataNotReceivedException("Game instance hasn't been received by client yet")
@@ -26,6 +22,16 @@ class MultiplayerConnector(socket: Socket, playerName: String) : IGameServerConn
 
         return gameCopy
     }
+
+//    override fun getGame(): Game {
+//        var game = GameController.instance.gameModel?.state?.game
+//
+//        if (game == null) {
+//            throw ServerDataNotReceivedException("Game instance hasn't been received by client yet")
+//        }
+//
+//        return game
+//    }
 
     override fun getPlayerID(): Int {
         var id: Int? = GameController.instance.gameModel?.localPlayer?.localPlayerInstance?.objectID

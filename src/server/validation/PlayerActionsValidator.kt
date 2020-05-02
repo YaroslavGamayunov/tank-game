@@ -11,7 +11,7 @@ class InvalidActionSequenceException(cause: Throwable? = null) :
 
 class PlayerActionsValidator : ServerPacketValidatorChainLink() {
     override fun invoke(packet: ServerPacket) {
-        if (packet.type != PacketType.PLAYER_MOVED) {
+        if (packet.type != PacketType.SHARED_ACTIONS) {
             return
         }
         var actionSequence = packet.payload as GameActionSequence

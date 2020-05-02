@@ -12,10 +12,13 @@ class GameFieldManager(var game: Game) {
     var playersConnected = 0
 
     fun createLocalPlayer(): GamePlayer {
-        return GamePlayer(game.vacantID())
+        var player = GamePlayer(game.vacantID())
+        game.objects.add(player)
+        return player
     }
 
-    fun onPlayerConnected(player: GamePlayer) {
+    fun onPlayerConnected(player: GamePlayer): GameActionSequence {
+        game.objects.add(player)
         playersConnected++
 
         var tankPosition: Vector2
@@ -35,10 +38,9 @@ class GameFieldManager(var game: Game) {
                 playerID = player.objectID,
                 orientation = Orientation.UP)
 
-        addObjects(tank)
-    }
-
-    fun addObjects(vararg objects: GameObject) {
-        objects.map { obj -> ObjectsCreated(obj)(game) }
+        val addSeq = GameActionSequence(-1)
+        addSeq.addAction(ObjectsCreated(player))
+        addSeq.addAction(ObjectsCreated(tank))
+        return addSeq
     }
 }

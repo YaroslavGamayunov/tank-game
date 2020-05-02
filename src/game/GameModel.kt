@@ -2,7 +2,6 @@ package game
 
 import GameController
 import game.actions.GameActionSequence
-import game.objects.GamePlayer
 import server.PacketType
 import server.ServerConnection
 import server.ServerConnectionCallback
@@ -19,6 +18,7 @@ class GameModel(socket: Socket) : ServerConnectionCallback {
     }
 
     override fun onReceive(serverPacket: ServerPacket) {
+        println("Game model received object from server: ${serverPacket}")
         when (serverPacket.type) {
             PacketType.GAME_STATE -> {
                 state = serverPacket.payload as GameState
@@ -35,7 +35,7 @@ class GameModel(socket: Socket) : ServerConnectionCallback {
 
             PacketType.PLAYER_LEFT -> removePlayer(serverPacket.payload as String)
 
-            PacketType.PLAYER_MOVED -> applyPlayerActions(serverPacket.payload as GameActionSequence)
+            PacketType.SHARED_ACTIONS -> applyPlayerActions(serverPacket.payload as GameActionSequence)
         }
 
         GameController.instance.onGameStateChanged(state)

@@ -20,18 +20,23 @@ class GameController private constructor() {
         val instance: GameController by lazy { HOLDER.INSTANCE }
     }
 
-    private var screens = arrayListOf<JFrame>(MainScreen())
+    private var screens = arrayListOf<JFrame>()
 
     var gameModel: GameModel? = null
     private var server: Server? = null
+    var isGuiUsed: Boolean = false
 
     init {
         println("GameController created")
+        changeScreen(MainScreen())
     }
 
     private fun changeScreen(screen: JFrame) {
         //currentScreen.dispatchEvent(WindowEvent(currentScreen, WindowEvent.WINDOW_CLOSED));
-        screens.add(screen)
+        if (isGuiUsed) {
+            screens.add(screen)
+            screen.isVisible = true
+        }
     }
 
     fun getGameCopy() = gameModel?.getGameCopy()
@@ -39,23 +44,23 @@ class GameController private constructor() {
     // These 3 methods below are designed for connecting and hosting server by local user
     fun connectToServer(playerName: String, hostName: String, port: Int) {
         gameModel = GameModel(Socket(hostName, port))
-        changeScreen(ServerLobbyScreen(hostName, port))
         gameModel!!.addPlayer(Player(playerName), isLocalPlayer = true)
+
+        changeScreen(ServerLobbyScreen(hostName, port))
     }
 
     fun connectToServer(playerName: String, socket: Socket) {
         gameModel = GameModel(socket)
-        changeScreen(ServerLobbyScreen(socket.inetAddress.toString(), socket.port))
         gameModel!!.addPlayer(Player(playerName), isLocalPlayer = true)
+
+        changeScreen(ServerLobbyScreen(socket.inetAddress.toString(), socket.port))
     }
 
     fun hostServer(playerName: String, port: Int) {
         server = Server(port, GameServerProcessor())
 
         val hostName = InetAddress.getLocalHost().hostAddress
-        gameModel = GameModel(Socket(hostName, port))
-        changeScreen(ServerLobbyScreen(hostName, port))
-        gameModel!!.addPlayer(Player(playerName), isLocalPlayer = true)
+        connectToServer(playerName, hostName, port)
     }
 
     fun onGameStateChanged(state: GameState) {
