@@ -15,6 +15,11 @@ class SwingDefaultCamera : SwingCamera{
         return Vector2(toScreenCoords(vec.x), toScreenCoords(vec.y))
     }
 
+    fun toUnitCoords(vec: Vector2) : Vector3{
+        val deltaFromCenter = vec - canvasSize / 2
+        return Vector3(deltaFromCenter) * (transform.scale.x / canvasSize.x) + transform.position
+    }
+
     var canvasSize : Vector2 = Vector2(0,0)
         set(value){
             field = value

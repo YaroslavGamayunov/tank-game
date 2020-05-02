@@ -6,6 +6,7 @@ package guiclient
  * height is calculated as initial height / initial width * width in units.
  * Number of units in window is camera implementation responsibility
  */
-open class Sprite<Context : IRenderingContext>(factory: IRendererFactory<Context>, path : String) : VisualObjectCompositor<Context>(){
-    override val renderer: IVisualObjectRenderer<Context> = factory.getSpriteRenderer(this, path)
+open class Sprite<Context : IRenderingContext>(factory: IRendererFactory<Context>, path : String, val isTilemap : Boolean = false) : VisualObjectCompositor<Context>(){
+    override val renderer: IVisualObjectRenderer<Context> = if (isTilemap) factory.getTilemapRenderer(this, path)
+                                                            else factory.getSpriteRenderer(this, path)
 }

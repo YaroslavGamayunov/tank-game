@@ -12,4 +12,12 @@ class SwingRendererFactory : IRendererFactory<SwingRenderingContext> {
         val image = ImageIO.read(File("assets/sprites/$assetName"))
         return SwingSpriteRenderer(visualObject, image);
     }
+
+    override fun getTilemapRenderer(
+        tilemap: Sprite<SwingRenderingContext>,
+        assetName: String
+    ): IVisualObjectRenderer<SwingRenderingContext> {
+        val image = ImageIO.read(File("assets/sprites/$assetName"))
+        return SwingTilemapRenderer(tilemap, image)
+    }
 }
