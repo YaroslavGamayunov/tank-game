@@ -26,7 +26,7 @@ class Server(port: Int, private var packetProcessor: ServerIncomingPacketProcess
             if (packet.whiteList.isNotEmpty() && !packet.whiteList.contains(connection)) {
                 continue
             }
-            if (packet.blackList.isNotEmpty() && packet.whiteList.contains(connection)) {
+            if (packet.blackList.isNotEmpty() && packet.blackList.contains(connection)) {
                 continue
             }
             connection.sendData(packet.serverPacket)
