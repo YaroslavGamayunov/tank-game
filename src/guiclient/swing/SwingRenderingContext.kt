@@ -13,7 +13,7 @@ open class SwingRenderingContext : IRenderingContext {
     override fun initContext(){
         val frame = JFrame("Tank Game by Yaroslav G., Gregory M., Dmitriy P.")
         defaultCamera = SwingDefaultCamera() as ICamera<IRenderingContext>
-        canvas = SwingCanvas(defaultCamera as SwingDefaultCamera)
+        canvas = SwingCanvas(defaultCamera as SwingDefaultCamera, this)
         canvas.setSize(800, 800)
         frame.add(canvas)
         frame.pack()

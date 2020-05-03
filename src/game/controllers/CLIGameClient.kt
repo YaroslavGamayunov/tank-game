@@ -13,7 +13,7 @@ import java.lang.IndexOutOfBoundsException
 import java.lang.NumberFormatException
 import kotlin.system.exitProcess
 
-class CLIGameClient(server: IGameServerConnector) : GameClient(server), IActionVisitor, IEventVisitor {
+open class CLIGameClient(server: IGameServerConnector) : GameClient(server), IActionVisitor, IEventVisitor {
     init{
         printLineToOutput("Starting CLI client.....")
         printLineToOutput("List of provided game objects")
@@ -111,6 +111,7 @@ class CLIGameClient(server: IGameServerConnector) : GameClient(server), IActionV
         var event = initialEvent
         while(event != null){
             val next = event()
+            gameStateChange()
             event(this)
             event = next
         }
@@ -120,9 +121,14 @@ class CLIGameClient(server: IGameServerConnector) : GameClient(server), IActionV
     override fun applyExternalActions(sequence: GameActionSequence) {
         for(action in sequence.actions){
             val event = action(game)
+            gameStateChange()
             action(this)
             processEventResult(event)
         }
+
+    }
+
+    protected open fun gameStateChange(){
 
     }
 
