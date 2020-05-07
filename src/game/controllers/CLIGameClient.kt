@@ -16,7 +16,8 @@ import kotlin.system.exitProcess
 
 class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IActionVisitor, IEventVisitor {
 
-    override val owner: GamePlayer = server.getGameCopy().getObjectByID(server.getPlayerID()) as GamePlayer
+    override val owner: GamePlayer
+        get() = server.getGameCopy().getObjectByID(server.getPlayerID()) as GamePlayer
 
     init {
         printLineToOutput("Starting CLI client.....")

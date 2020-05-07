@@ -12,15 +12,19 @@ class GameModel(socket: Socket) : ServerConnectionCallback {
     private var connection: ServerConnection = ServerConnection(socket)
     var state: GameState = GameState()
     var localPlayer: Player? = null
+    var isGameStateReceived: Boolean = false
+        private set
 
     init {
         connection.connectionCallback = this
     }
 
+    // TODO: Create callbacks for move demanded and gamestatechanged
     override fun onReceive(serverPacket: ServerPacket) {
         println("Game model received object from server: ${serverPacket}")
         when (serverPacket.type) {
             PacketType.GAME_STATE -> {
+                isGameStateReceived = true
                 state = serverPacket.payload as GameState
 
                 if (localPlayer != null) {
@@ -44,12 +48,15 @@ class GameModel(socket: Socket) : ServerConnectionCallback {
     override fun onConnectionInterrupted() {}
 
 
-    fun applyPlayerActions(sequence: GameActionSequence) {
+    private fun applyPlayerActions(sequence: GameActionSequence) {
         var game: Game = state.game ?: return
         for (action in sequence.actions) {
             action(game)
         }
-        GameController.instance.onGameStateChanged(state)
+    }
+
+    fun applyActionsToServer(sequence: GameActionSequence) {
+        connection.sendData(ServerPacket(PacketType.SHARED_ACTIONS, sequence, shouldBeShared = true))
     }
 
     fun getGameCopy() = state.game?.copy()

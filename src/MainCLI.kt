@@ -35,6 +35,9 @@ fun runMultiplayer() {
         connector = MultiplayerConnector(Socket(hostName, port), name)
     }
 
+    // bad for garbage collector
+    val client = CLIGameClient(connector)
+    connector.runConnector(client)
 
 //    val connector1 = LocalMultiplayerConnector(server, tankPosition = Vector2(0, 0))
 //    val client1 = CLIGameClient(connector1)

@@ -2,6 +2,7 @@ package game.controllers
 
 import game.Game
 import java.net.Socket
+import kotlin.coroutines.*
 
 class ServerDataNotReceivedException(message: String) : Throwable(message)
 
@@ -11,6 +12,20 @@ class MultiplayerConnector(socket: Socket, playerName: String) : IGameServerConn
 
     init {
         GameController.instance.connectToServer(playerName, socket)
+        // todo rebuld because it blocks the thread
+        waitForConnection()
+    }
+
+    fun waitForConnection() {
+        while (true) {
+            try {
+                getGameCopy()
+            } catch (e: ServerDataNotReceivedException) {
+                Thread.sleep(100)
+                continue
+            }
+            break
+        }
     }
 
     override fun getGameCopy(): Game {

@@ -2,6 +2,7 @@ import game.GameModel
 import game.GameServerProcessor
 import game.GameState
 import game.Player
+import game.actions.GameActionSequence
 import gui.GameStateListener
 import gui.MainScreen
 import gui.ServerLobbyScreen
@@ -61,6 +62,10 @@ class GameController private constructor() {
 
         val hostName = InetAddress.getLocalHost().hostAddress
         connectToServer(playerName, hostName, port)
+    }
+
+    fun onPlayerMoved(sequence: GameActionSequence) {
+        gameModel
     }
 
     fun onGameStateChanged(state: GameState) {

@@ -13,7 +13,6 @@ class GameFieldManager(var game: Game) {
 
     fun createLocalPlayer(): GamePlayer {
         var player = GamePlayer(game.vacantID())
-        game.objects.add(player)
         return player
     }
 
@@ -37,6 +36,8 @@ class GameFieldManager(var game: Game) {
                 health = 4,
                 playerID = player.objectID,
                 orientation = Orientation.UP)
+
+        game.objects.add(tank)
 
         val addSeq = GameActionSequence(-1)
         addSeq.addAction(ObjectsCreated(player))
