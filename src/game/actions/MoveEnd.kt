@@ -6,8 +6,8 @@ import game.events.IGameEvent
 
 class MoveEnd(val playerID: Int) : GameAction() {
 
-    override fun invoke(visitor: IActionVisitor) {
-        visitor.onMoveEnd(this)
+    override fun invoke(visitor: IActionVisitor?) {
+        visitor?.onMoveEnd(this)
     }
 
     override fun invoke(game: Game, checkCorrectnessOnly: Boolean) : IGameEvent? {

@@ -2,6 +2,7 @@ package game
 
 import GameController
 import game.actions.GameActionSequence
+import game.actions.applyAllActions
 import server.PacketType
 import server.ServerConnection
 import server.ServerConnectionCallback
@@ -51,7 +52,7 @@ class GameModel(socket: Socket) : ServerConnectionCallback {
     private fun applyPlayerActions(sequence: GameActionSequence) {
         var game: Game = state.game ?: return
         for (action in sequence.actions) {
-            action(game)
+            applyAllActions(game, action)
         }
         GameController.instance.onActionsReceived(sequence)
     }

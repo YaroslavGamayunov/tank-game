@@ -5,7 +5,7 @@ abstract class GameEvent : IGameEvent{
         return null
     }
 
-    override fun invoke(visitor: IEventVisitor) {
-        visitor.onUnknownEvent(this)
+    override fun invoke(visitor: IEventVisitor?) {
+        visitor?.onUnknownEvent(this)
     }
 }

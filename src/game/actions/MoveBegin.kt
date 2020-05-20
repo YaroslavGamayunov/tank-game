@@ -5,8 +5,8 @@ import game.events.ActionEvent
 import game.events.IGameEvent
 
 class MoveBegin(val playerID : Int) : GameAction() {
-    override fun invoke(visitor: IActionVisitor) {
-        visitor.onMoveStarted(this)
+    override fun invoke(visitor: IActionVisitor?) {
+        visitor?.onMoveStarted(this)
     }
 
     override fun invoke(game: Game, checkCorrectnessOnly: Boolean) : IGameEvent? {

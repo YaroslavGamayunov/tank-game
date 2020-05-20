@@ -1,26 +1,37 @@
 package game
 
-import game.actions.GameActionSequence
-import game.actions.GameStarted
-import game.actions.MoveBegin
-import game.actions.ObjectsCreated
+import game.actions.*
 import game.objects.GameObject
 import game.objects.GamePlayer
 import game.tools.Orientation
 import game.tools.Vector2
 import game.units.Tank
 
-class GameFieldManager(var game: Game, val minPlayersForStart: Int = 2) {
+class GameFieldManager(var gameState: GameState, val minPlayersForStart: Int = 2) {
     var playersConnected = 0
+
+    var currentMovePlayerIndex = 0
+    var gamePlayerIds = arrayListOf<Int>()
+
+    private var game = gameState.game!!
 
     fun createLocalPlayer(): GamePlayer {
         var player = GamePlayer(game.vacantID())
         return player
     }
 
+    fun changeCurrentMovePlayer(): Int {
+        currentMovePlayerIndex = (currentMovePlayerIndex++) % gamePlayerIds.size
+        var currentMovePlayer = gamePlayerIds[currentMovePlayerIndex]
+        var action = MoveBegin(currentMovePlayer)
+        applyAllActions(game, action)
+        return gamePlayerIds[currentMovePlayerIndex]
+    }
+
     fun onPlayerConnected(player: GamePlayer): GameActionSequence {
         System.err.println("Field manager detected connection")
         game.objects.add(player)
+        player.linkIdentifiers(game)
         playersConnected++
 
         var tankPosition: Vector2
@@ -40,14 +51,19 @@ class GameFieldManager(var game: Game, val minPlayersForStart: Int = 2) {
                 playerID = player.objectID,
                 orientation = Orientation.UP)
 
+
         game.objects.add(tank)
+        tank.linkIdentifiers(game)
 
         val addSeq = GameActionSequence(player.objectID)
         addSeq.addAction(ObjectsCreated(player))
         addSeq.addAction(ObjectsCreated(tank))
         if (playersConnected == minPlayersForStart) {
             addSeq.addAction(GameStarted())
-            addSeq.addAction(MoveBegin(player.objectID))
+            for ((_, player) in gameState.players) {
+                player.localPlayerInstance?.objectID?.let { gamePlayerIds.add(it) }
+            }
+            addSeq.addAction(MoveBegin(changeCurrentMovePlayer()))
         }
         return addSeq
     }
@@ -55,11 +71,12 @@ class GameFieldManager(var game: Game, val minPlayersForStart: Int = 2) {
     // Receives actions sent from server and returns actions that all players should receive
     fun onPlayerMoved(player: GamePlayer, actionSequence: GameActionSequence): GameActionSequence {
         for (action in actionSequence.actions) {
-            action(game)
+            applyAllActions(game, action)
         }
 
-        val responseSequence = GameActionSequence(player.objectID)
-        responseSequence.addAction(MoveBegin(game.currentMovePlayer))
+        var currentMovePlayer = changeCurrentMovePlayer()
+        val responseSequence = GameActionSequence(currentMovePlayer)
+        responseSequence.addAction(MoveBegin(currentMovePlayer))
         return responseSequence
     }
 }

@@ -79,6 +79,7 @@ class GameController private constructor() {
         gameModel?.applyActionsToServer(sequence)
     }
 
+
     // receives actions from server
     fun onActionsReceived(sequence: GameActionSequence) {
         for (subscriber in gameActionListeners) {

@@ -1,6 +1,5 @@
 package game.controllers
 
-import GameController
 import game.Game
 import game.tools.Orientation
 import game.tools.Vector2

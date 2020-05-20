@@ -13,10 +13,11 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 class GameServerProcessor() : ServerIncomingPacketProcessor {
-    private val validatorChain = ServerPacketValidatorChain(PacketPayloadValidator(), PlayerActionsValidator())
     private var playerIdByAddr = HashMap<InetAddress, String>()
     private var globalGameState = GameState().apply { game = Game() }
-    private var fieldManager = GameFieldManager(globalGameState.game!!)
+    private val validatorChain =
+            ServerPacketValidatorChain(PacketPayloadValidator(), PlayerActionsValidator(globalGameState.game!!))
+    private var fieldManager = GameFieldManager(globalGameState)
 
 
     override fun onReceive(connection: ServerConnection, packet: ServerPacket): List<BroadcastPacket> {
