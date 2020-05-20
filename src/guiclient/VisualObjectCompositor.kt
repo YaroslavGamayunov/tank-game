@@ -12,9 +12,9 @@ open abstract  class VisualObjectCompositor<Context : IRenderingContext> : IVisu
         }
     }
 
-    override fun update(deltaTime : Double) {
+    override fun update(input : IInput) {
         callAllChilds {
-            it.update(deltaTime)
+            it.update(input)
         }
     }
 

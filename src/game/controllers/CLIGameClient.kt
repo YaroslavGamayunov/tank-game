@@ -22,13 +22,14 @@ open class CLIGameClient(server: IGameServerConnector) : GameClient(server), IAc
         }
     }
 
+    protected var lastSequence = GameActionSequence(owner.objectID)
     override fun makeYourMove() : GameActionSequence {
         printLineToOutput("Your turn, mister...")
         printLineToOutput("Type 'act [action_name] [args]' to make action")
         printLineToOutput("Type 'end' to make your turn and send it to other players")
         printLineToOutput("Type 'exit' to close application")
 
-        val seq = GameActionSequence(owner.objectID)
+        lastSequence = GameActionSequence(owner.objectID)
 
         var waitForInput = true
         var action : IGameAction? = null
@@ -88,10 +89,7 @@ open class CLIGameClient(server: IGameServerConnector) : GameClient(server), IAc
             }
             if(action!=null){
                 try {
-                    var event =  action(game)
-                    action(this)
-                    seq.actions.add(action)
-                    processEventResult(event)
+                    applyMyAction(action, lastSequence)
 
                 }catch (ex : IllegalActionException){
                     printErrorToOutput(ex.message?:"Some unknown illegal action")
@@ -100,11 +98,15 @@ open class CLIGameClient(server: IGameServerConnector) : GameClient(server), IAc
                 }
 
             }
-
-
-
         }
-        return seq
+        return lastSequence
+    }
+
+    protected fun applyMyAction(action : IGameAction, seq : GameActionSequence){
+        var event =  action(game)
+        action(this)
+        seq.actions.add(action)
+        processEventResult(event)
     }
 
     private fun processEventResult(initialEvent: IGameEvent?){

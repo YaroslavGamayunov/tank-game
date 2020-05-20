@@ -4,7 +4,7 @@ import guiclient.tools.Transform
 
 interface IVisualObject<Context: IRenderingContext> {
     fun start()
-    fun update(deltaTime : Double)
+    fun update(input : IInput)
     fun destroy()
 
     val childs : ArrayList<IVisualObject<Context>>

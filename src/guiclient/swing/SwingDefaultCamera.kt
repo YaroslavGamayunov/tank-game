@@ -5,7 +5,7 @@ import guiclient.tools.Transform
 import guiclient.tools.Vector3
 
 class SwingDefaultCamera : SwingCamera{
-    override val transform = Transform(Vector3(), Vector3(5.0,1.0))
+    override val transform = Transform(Vector3(), Vector3(10.0,1.0))
 
     private fun toScreenCoords(len : Double) : Int{
         return (len * (1.0/ transform.scale.x) * canvasSize.x).toInt()

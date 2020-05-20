@@ -1,17 +1,18 @@
 package guiclient.swing
 
-import guiclient.ICamera
-import guiclient.IRendererFactory
-import guiclient.IRenderingContext
-import guiclient.IVisualObject
+import game.tools.copySerializable
+import guiclient.*
+import guiclient.tools.Vector3
 import javax.swing.JFrame
+import kotlin.concurrent.thread
 
 typealias SwingCamera = ICamera<SwingRenderingContext>
 
 open class SwingRenderingContext : IRenderingContext {
     lateinit var canvas: SwingCanvas
+    lateinit var frame : JFrame
     override fun initContext(){
-        val frame = JFrame("Tank Game by Yaroslav G., Gregory M., Dmitriy P.")
+        frame = JFrame("Tank Game by Yaroslav G., Gregory M., Dmitriy P.")
         defaultCamera = SwingDefaultCamera() as ICamera<IRenderingContext>
         canvas = SwingCanvas(defaultCamera as SwingDefaultCamera, this)
         canvas.setSize(800, 800)
@@ -28,4 +29,19 @@ open class SwingRenderingContext : IRenderingContext {
 
     override lateinit var defaultCamera: ICamera<IRenderingContext>
     override val factory: IRendererFactory<IRenderingContext> = SwingRendererFactory() as IRendererFactory<IRenderingContext>
+    override fun createFrameInput(deltaTime: Double): IInput {
+        val input = object : IInput {
+            override val mousePosition: Vector3 = canvas.lastMouseClick ?: Vector3()
+            override val mouseClick: Boolean = canvas.lastMouseClick != null
+            override val deltaTime: Double = deltaTime
+            override val keyPressed: ArrayList<Char> = canvas.keys
+        }
+
+            synchronized(this) {
+                canvas.lastMouseClick = null
+                canvas.keys = arrayListOf<Char>()
+            }
+
+        return input
+    }
 }
