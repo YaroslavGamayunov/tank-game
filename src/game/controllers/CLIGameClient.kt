@@ -19,12 +19,14 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
     override val owner: GamePlayer
         get() = server.getGameCopy().getObjectByID(server.getPlayerID()) as GamePlayer
 
+    var game = Game()
+
     init {
-        printLineToOutput("Starting CLI client.....")
-        printLineToOutput("List of provided game objects")
-        for (x in server.getGameCopy().objects) {
-            printLineToOutput("[Object ${x.objectID}] ${x.toString()}")
-        }
+//        printLineToOutput("Starting CLI client.....")
+//        printLineToOutput("List of provided game objects")
+//        for (x in server.getGameCopy().objects) {
+//            printLineToOutput("[Object ${x.objectID}] ${x.toString()}")
+//        }
     }
 
     override fun makeYourMove(): GameActionSequence {
@@ -90,7 +92,7 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
             }
             if (action != null) {
                 // TODO dont do this
-                var game: Game = GameController.instance.gameModel?.state?.game ?: return seq
+                //var game: Game = GameController.instance.getGame() ?: return seq
                 try {
                     var event = action(game)
                     action(this)
@@ -122,8 +124,8 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
 
     override fun applyExternalActions(sequence: GameActionSequence) {
         //  printLineToOutput("Action sequence has come owner = [Player ${sequence.playerID}]")
-        // TODO dont do this
-        var game: Game = GameController.instance.gameModel?.state?.game ?: return
+        //var game: Game = GameController.instance.getGame() ?: return;
+
         for (action in sequence.actions) {
             val event = action(game)
             action(this)

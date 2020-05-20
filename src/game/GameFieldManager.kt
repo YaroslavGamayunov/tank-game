@@ -1,6 +1,8 @@
 package game
 
 import game.actions.GameActionSequence
+import game.actions.GameStarted
+import game.actions.MoveBegin
 import game.actions.ObjectsCreated
 import game.objects.GameObject
 import game.objects.GamePlayer
@@ -8,7 +10,7 @@ import game.tools.Orientation
 import game.tools.Vector2
 import game.units.Tank
 
-class GameFieldManager(var game: Game) {
+class GameFieldManager(var game: Game, val minPlayersForStart: Int = 1) {
     var playersConnected = 0
 
     fun createLocalPlayer(): GamePlayer {
@@ -17,6 +19,7 @@ class GameFieldManager(var game: Game) {
     }
 
     fun onPlayerConnected(player: GamePlayer): GameActionSequence {
+        System.err.println("Field manager detected connection")
         game.objects.add(player)
         playersConnected++
 
@@ -39,9 +42,13 @@ class GameFieldManager(var game: Game) {
 
         game.objects.add(tank)
 
-        val addSeq = GameActionSequence(-1)
+        val addSeq = GameActionSequence(player.objectID)
         addSeq.addAction(ObjectsCreated(player))
         addSeq.addAction(ObjectsCreated(tank))
+        if (playersConnected == minPlayersForStart) {
+            addSeq.addAction(GameStarted())
+            addSeq.addAction(MoveBegin(player.objectID))
+        }
         return addSeq
     }
 }

@@ -13,7 +13,7 @@ class Server(port: Int, private var packetProcessor: ServerIncomingPacketProcess
     init {
         try {
             serverSocket = ServerSocket(port)
-            println("Starting server on ${InetAddress.getLocalHost().hostAddress}")
+            System.err.println("Starting server on ${InetAddress.getLocalHost().hostAddress}")
             // TODO Add ability to control lifecycle
             start()
         } catch (e: IOException) {
@@ -42,7 +42,7 @@ class Server(port: Int, private var packetProcessor: ServerIncomingPacketProcess
 
                 connection.connectionCallback = object : ServerConnectionCallback {
                     override fun onReceive(serverPacket: ServerPacket) {
-                        println("Server received object $serverPacket")
+                        System.err.println("Server received object $serverPacket")
 
                         var packetsForSharing: List<BroadcastPacket> =
                                 packetProcessor.onReceive(connection, serverPacket)
@@ -53,7 +53,7 @@ class Server(port: Int, private var packetProcessor: ServerIncomingPacketProcess
                     }
 
                     override fun onConnectionInterrupted() {
-                        println("Client disconnected: $connection")
+                        System.err.println("Client disconnected: $connection")
                         connectionSet.remove(connection)
 
                         var packetsForSharing: List<BroadcastPacket> =

@@ -1,5 +1,6 @@
 package game
 
+import game.tools.copySerializable
 import server.*
 import server.validation.PlayerActionsValidator
 import server.validation.PacketPayloadValidator
@@ -30,16 +31,15 @@ class GameServerProcessor() : ServerIncomingPacketProcessor {
 
             player.localPlayerInstance = fieldManager.createLocalPlayer()
 
-            var actionsForSharing = fieldManager.onPlayerConnected(player.localPlayerInstance!!)
+            var gameStatePacket = ServerPacket(PacketType.GAME_STATE, globalGameState.copySerializable())
 
             var packetList = arrayListOf<BroadcastPacket>()
-
-            var gameStatePacket = ServerPacket(PacketType.GAME_STATE, globalGameState)
             packetList.add(BroadcastPacket.withWhiteList(gameStatePacket, connection))
 
+            var actionsForSharing = fieldManager.onPlayerConnected(player.localPlayerInstance!!)
 
             var actionsPacket = ServerPacket(PacketType.SHARED_ACTIONS, actionsForSharing)
-            packetList.add(BroadcastPacket.withBlackList(actionsPacket, connection))
+            packetList.add(BroadcastPacket.withWhiteList(actionsPacket))
 
             return packetList
         }

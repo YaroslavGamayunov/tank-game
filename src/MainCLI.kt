@@ -18,7 +18,7 @@ fun runMultiplayer() {
     if (response.toLowerCase().equals("y")) {
         println("Write down your name:")
         var name = readLine() ?: ""
-        println("Ok, then type a server port (0 - 65536):")
+        println("Ok, then type a server port (0 - 65535):")
         var port = readLine()?.toInt() ?: 1234
         server = Server(port, GameServerProcessor())
         connector = MultiplayerConnector(Socket(InetAddress.getLocalHost().hostAddress, port), name)

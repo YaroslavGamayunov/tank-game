@@ -1,7 +1,4 @@
-import game.GameModel
-import game.GameServerProcessor
-import game.GameState
-import game.Player
+import game.*
 import game.actions.GameActionSequence
 import gui.GameStateListener
 import gui.MainScreen
@@ -21,6 +18,7 @@ class GameController private constructor() {
         val instance: GameController by lazy { HOLDER.INSTANCE }
     }
 
+    private var gameActionListeners = ArrayList<GameActionsListener>()
     private var screens = arrayListOf<JFrame>()
 
     var gameModel: GameModel? = null
@@ -28,7 +26,7 @@ class GameController private constructor() {
     var isGuiUsed: Boolean = false
 
     init {
-        println("GameController created")
+        System.err.println("GameController created")
         changeScreen(MainScreen())
     }
 
@@ -40,7 +38,9 @@ class GameController private constructor() {
         }
     }
 
-    fun getGameCopy() = gameModel?.getGameCopy()
+    fun getGame(copy: Boolean = true) = if (copy) gameModel?.getGame()?.copy() else gameModel?.getGame()
+
+    fun getLocalPlayer() = gameModel?.localPlayer
 
     // These 3 methods below are designed for connecting and hosting server by local user
     fun connectToServer(playerName: String, hostName: String, port: Int) {
@@ -64,9 +64,6 @@ class GameController private constructor() {
         connectToServer(playerName, hostName, port)
     }
 
-    fun onPlayerMoved(sequence: GameActionSequence) {
-        gameModel
-    }
 
     fun onGameStateChanged(state: GameState) {
         for (screen in screens) {
@@ -75,4 +72,27 @@ class GameController private constructor() {
             }
         }
     }
+
+
+    // sends local player actions to the server
+    fun onPlayerMoved(sequence: GameActionSequence) {
+        gameModel?.applyActionsToServer(sequence)
+    }
+
+    // receives actions from server
+    fun onActionsReceived(sequence: GameActionSequence) {
+        for (subscriber in gameActionListeners) {
+            subscriber.onReceive(sequence)
+        }
+    }
+
+    fun addGameActionListener(listener: GameActionsListener) {
+        gameActionListeners.add(listener)
+    }
+
+    fun removeGameActionListener(listener: GameActionsListener) {
+        gameActionListeners.remove(listener)
+    }
+
+
 }

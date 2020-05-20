@@ -15,7 +15,7 @@ class PlayerActionsValidator : ServerPacketValidatorChainLink() {
             return
         }
         var actionSequence = packet.payload as GameActionSequence
-        var gameCopy = GameController.instance.getGameCopy()
+        var gameCopy = GameController.instance.getGame()
 
         if (gameCopy != null) {
             for (action in actionSequence.actions) {
