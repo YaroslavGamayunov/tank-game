@@ -6,4 +6,5 @@ interface IRenderingContext {
     val defaultCamera : ICamera<IRenderingContext>
     val factory: IRendererFactory<IRenderingContext>
     fun createFrameInput(deltaTime : Double) : IInput
+    fun setTurnState(status : Boolean)
 }

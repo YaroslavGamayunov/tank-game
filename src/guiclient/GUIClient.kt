@@ -58,20 +58,22 @@ class GUIClient<RenderingContext : IRenderingContext>(server: IGameServerConnect
     override fun makeYourMove() : GameActionSequence {
         lastSequence = GameActionSequence(owner.objectID)
         wait = true
+        context.setTurnState(true)
         while(wait){
             Thread.sleep(100)
         }
         applyMyAction( MoveEnd(owner.objectID), lastSequence)
+        context.setTurnState(false)
         return lastSequence
     }
 
-    fun renderState(){
+    fun renderState() = contextSync{
         removeMarkers()
         scene.childs.clear()
         scene.childs.add(Sprite<RenderingContext>(factory, "grass.jpg",true))
         for(obj in game.objects){
             if (obj is Tank) {
-                val tankSprite = PositionalObject<RenderingContext>(factory, "tank.png") {
+                val tankSprite = PositionalObject<RenderingContext>(factory, if(obj.owner == owner) "tank.png" else "tankEnemy.png") {
                     if(game.currentMovePlayer != owner.objectID) return@PositionalObject
                     contextSync {
 
@@ -133,6 +135,7 @@ class GUIClient<RenderingContext : IRenderingContext>(server: IGameServerConnect
                 gameObjects[obj.objectID] = tankSprite
                 tankSprite.transform.rotation = rotationToAngle[obj.orientation]!!
                 scene.childs.add(tankSprite)
+                scene.childs.add(HPBar<RenderingContext>(factory, obj, tankSprite.transform.position))
             }
 
             if (obj is Obstacle) {
@@ -152,9 +155,7 @@ class GUIClient<RenderingContext : IRenderingContext>(server: IGameServerConnect
     }
 
     override fun gameStateChange(){
-        synchronized(context) {
-            renderState()
-        }
+        renderState()
     }
 
 }

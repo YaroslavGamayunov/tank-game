@@ -2,10 +2,10 @@ package guiclient
 
 import guiclient.tools.Vector3
 
-interface IInput {
+interface IInput{
     val mousePosition: Vector3
     val mouseClick : Boolean
     val deltaTime : Double
     val keyPressed : ArrayList<Char>
-
+    fun <Context : IRenderingContext> getTypedCamera() : ICamera<Context>
 }

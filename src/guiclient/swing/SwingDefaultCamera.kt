@@ -16,7 +16,7 @@ class SwingDefaultCamera : SwingCamera{
     }
 
     fun toScreenCoords(vec : Vector3) : Vector2{
-        return Vector2(toScreenCoords(vec.x), -toScreenCoords(vec.y)) + canvasSize / 2
+        return Vector2(toScreenCoords(vec.x-transform.position.x), -toScreenCoords(vec.y-transform.position.y)) + canvasSize / 2
     }
     fun toScreenSize(vec : Vector3) : Vector2{
         return Vector2(toScreenCoords(vec.x), toScreenCoords(vec.y))
@@ -24,7 +24,7 @@ class SwingDefaultCamera : SwingCamera{
 
     fun toUnitCoords(vec: Vector2) : Vector3{
         val vector = vec - canvasSize/2
-        return Vector3(toUnitCoords(vector.x), -toUnitCoords(vector.y))
+        return Vector3(toUnitCoords(vector.x), -toUnitCoords(vector.y)) + transform.position
     }
 
     var canvasSize : Vector2 = Vector2(0,0)

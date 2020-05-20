@@ -1,9 +1,6 @@
 package guiclient.swing
 
-import guiclient.IRendererFactory
-import guiclient.IVisualObject
-import guiclient.IVisualObjectRenderer
-import guiclient.Sprite
+import guiclient.*
 import java.io.File
 import javax.imageio.ImageIO
 
@@ -19,5 +16,9 @@ class SwingRendererFactory : IRendererFactory<SwingRenderingContext> {
     ): IVisualObjectRenderer<SwingRenderingContext> {
         val image = ImageIO.read(File("assets/sprites/$assetName"))
         return SwingTilemapRenderer(tilemap, image)
+    }
+
+    override fun getHPRenderer(hpBar: HPBar<SwingRenderingContext>): IVisualObjectRenderer<SwingRenderingContext> {
+        return SwingHPRenderer(hpBar)
     }
 }

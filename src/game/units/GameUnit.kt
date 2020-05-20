@@ -20,6 +20,8 @@ open class GameUnit(
     var health : Int = health
         protected set
 
+    val maxHealth = health
+
     override val solid : Boolean = true
 
     @Transient

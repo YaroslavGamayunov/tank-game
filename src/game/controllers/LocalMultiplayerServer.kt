@@ -8,6 +8,7 @@ import game.actions.ObjectsCreated
 import game.objects.GamePlayer
 import game.tools.Orientation
 import game.tools.Vector2
+import game.units.Obstacle
 import game.units.Tank
 
 class LocalMultiplayerServer {
@@ -16,6 +17,9 @@ class LocalMultiplayerServer {
 
     init{
         game.friendlyFireAllowed = false
+        game.objects.add(Obstacle(game.vacantID(), Vector2(1, 1)))
+        game.objects.add(Obstacle(game.vacantID(), Vector2(1, 2)))
+        game.objects.add(Obstacle(game.vacantID(), Vector2(1, 3)))
     }
 
     fun gameCopy() = game.copy()

@@ -1,5 +1,6 @@
 package guiclient.swing
 
+import game.tools.Vector2
 import guiclient.Sprite
 import guiclient.tools.Vector3
 import java.awt.Graphics
@@ -15,7 +16,7 @@ open class SwingSpriteRenderer(val sprite : Sprite<SwingRenderingContext>, val i
     }
 
     protected fun renderAt(graphics: Graphics, camera: SwingDefaultCamera, position: Vector3) {
-        val size = camera.toScreenSize(sprite.transform.scale)
+        val size = camera.toScreenSize(sprite.transform.scale) + Vector2(1,1)
         val center  = camera.toScreenCoords(position)
         val pos = center - size / 2
         val graphics2d = graphics as Graphics2D

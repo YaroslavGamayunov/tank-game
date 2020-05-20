@@ -11,8 +11,9 @@ typealias SwingCamera = ICamera<SwingRenderingContext>
 open class SwingRenderingContext : IRenderingContext {
     lateinit var canvas: SwingCanvas
     lateinit var frame : JFrame
+    val title = "Tank Game by Yaroslav G., Gregory M., Dmitriy P."
     override fun initContext(){
-        frame = JFrame("Tank Game by Yaroslav G., Gregory M., Dmitriy P.")
+        frame = JFrame(title)
         defaultCamera = SwingDefaultCamera() as ICamera<IRenderingContext>
         canvas = SwingCanvas(defaultCamera as SwingDefaultCamera, this)
         canvas.setSize(800, 800)
@@ -35,6 +36,9 @@ open class SwingRenderingContext : IRenderingContext {
             override val mouseClick: Boolean = canvas.lastMouseClick != null
             override val deltaTime: Double = deltaTime
             override val keyPressed: ArrayList<Char> = canvas.keys
+            override fun <Context : IRenderingContext> getTypedCamera(): ICamera<Context> {
+                return defaultCamera as ICamera<Context>
+            }
         }
 
             synchronized(this) {
@@ -43,5 +47,9 @@ open class SwingRenderingContext : IRenderingContext {
             }
 
         return input
+    }
+
+    override fun setTurnState(status: Boolean) {
+        frame.title = title + ( if (status) ": your Turn! Press 'e' on ENG to end turn" else "")
     }
 }
