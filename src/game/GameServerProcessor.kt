@@ -1,5 +1,7 @@
 package game
 
+import game.actions.GameActionSequence
+import game.objects.GamePlayer
 import game.tools.copySerializable
 import server.*
 import server.validation.PlayerActionsValidator
@@ -21,6 +23,8 @@ class GameServerProcessor() : ServerIncomingPacketProcessor {
         try {
             validatorChain.validate(packet)
         } catch (e: ServerPacketValidationException) {
+            e.printStackTrace()
+            System.err.println("Packet validation FAILED: ${packet}")
             return listOf()
         }
 
@@ -38,6 +42,17 @@ class GameServerProcessor() : ServerIncomingPacketProcessor {
 
             var actionsForSharing = fieldManager.onPlayerConnected(player.localPlayerInstance!!)
 
+            var actionsPacket = ServerPacket(PacketType.SHARED_ACTIONS, actionsForSharing)
+            packetList.add(BroadcastPacket.withWhiteList(actionsPacket))
+
+            return packetList
+        } else if (packet.type == PacketType.SHARED_ACTIONS) {
+            // todo create better validator for action sequence
+            var actions = packet.payload as GameActionSequence
+            var player = globalGameState.game?.getObjectByID(actions.playerID) as GamePlayer
+            var actionsForSharing = fieldManager.onPlayerMoved(player, actions)
+
+            var packetList = arrayListOf<BroadcastPacket>()
             var actionsPacket = ServerPacket(PacketType.SHARED_ACTIONS, actionsForSharing)
             packetList.add(BroadcastPacket.withWhiteList(actionsPacket))
 

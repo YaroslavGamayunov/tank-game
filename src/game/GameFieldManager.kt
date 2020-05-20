@@ -10,7 +10,7 @@ import game.tools.Orientation
 import game.tools.Vector2
 import game.units.Tank
 
-class GameFieldManager(var game: Game, val minPlayersForStart: Int = 1) {
+class GameFieldManager(var game: Game, val minPlayersForStart: Int = 2) {
     var playersConnected = 0
 
     fun createLocalPlayer(): GamePlayer {
@@ -50,5 +50,16 @@ class GameFieldManager(var game: Game, val minPlayersForStart: Int = 1) {
             addSeq.addAction(MoveBegin(player.objectID))
         }
         return addSeq
+    }
+
+    // Receives actions sent from server and returns actions that all players should receive
+    fun onPlayerMoved(player: GamePlayer, actionSequence: GameActionSequence): GameActionSequence {
+        for (action in actionSequence.actions) {
+            action(game)
+        }
+
+        val responseSequence = GameActionSequence(player.objectID)
+        responseSequence.addAction(MoveBegin(game.currentMovePlayer))
+        return responseSequence
     }
 }
