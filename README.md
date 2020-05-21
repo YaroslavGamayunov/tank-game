@@ -22,7 +22,9 @@ gradle build
  
  после чего для запуска используйте команду
  ```bash
- java -jar TankGame.jar
+ java -jar TankGame.jar -server [port]
+ java -jar TankGame.jar -client [nickname] [server:port] gui
+ java -jar TankGame.jar -client [nickname] [server:port] cli
  ```
 
 
