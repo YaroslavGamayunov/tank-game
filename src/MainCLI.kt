@@ -1,18 +1,55 @@
 import game.GameServerProcessor
 import game.controllers.*
-import game.tools.Vector2
 import server.Server
 import java.net.InetAddress
 import java.net.Socket
-import guiclient.GUIClient
-import guiclient.RenderingScene
-import guiclient.swing.SwingRendererFactory
-import guiclient.swing.SwingRenderingContext
-import guiclient.swing.SwingSceneRenderer
 
-fun main() {
-    runMultiplayerServer()
+fun viewDocs(){
+    println("This it Tank Game developed by Yaroslav G. Gregory M. Dmitriy P.");
+    println("Use: -help \t to view this guide");
+    println("Use: -server [port]\t to run server");
+    println("Use: -client [nickname] [server:port] [cli|gui]\t to run connect to the server");
+    println()
 }
+
+fun main(args: Array<String>) {
+    if(args.isEmpty()){
+        return viewDocs()
+    }
+
+    when(args[0]){
+        "-help"->{
+            return viewDocs()
+        }
+
+        "-server"->{
+            if(args.size < 2) return viewDocs()
+            val port = args[1].toInt()
+            val server = Server(port, GameServerProcessor())
+        }
+
+        "-client"->{
+            if(args.size < 4) return viewDocs()
+            val parts = args[2].split(':')
+            val hostName = parts[0]
+            val port = parts[1].toInt()
+            val connector = MultiplayerConnector(Socket(hostName, port), args[1])
+            when(args[3]){
+                "cli"->{
+                    return connector.runConnector(CLIClientFactory())
+                }
+
+                "gui"->{
+                   return connector.runConnector(SwingClientFactory())
+                }
+            }
+
+        }
+    }
+
+}
+
+
 /*
 fun runGuiSinglePlayer(){
     val connector = LocalSinglePlayerConnector()
