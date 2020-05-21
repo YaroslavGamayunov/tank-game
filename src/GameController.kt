@@ -78,7 +78,7 @@ class GameController private constructor() {
     // sends local player actions to the server
     fun onPlayerMoved(sequence: GameActionSequence, shouldUpdateModel: Boolean = false) {
         gameModel?.applyActionsToServer(sequence)
-        
+
         if (shouldUpdateModel) {
             for (action in sequence.actions) {
                 gameModel?.getGame()?.let { applyAllActions(it, action) }
@@ -90,9 +90,17 @@ class GameController private constructor() {
     // receives actions from server
     fun onActionsReceived(sequence: GameActionSequence) {
         for (subscriber in gameActionListeners) {
-            subscriber.onReceive(sequence)
+            subscriber.onSequenceReceived(sequence)
         }
     }
+
+    // receives actions from server (happens when player connects to server)
+    fun onGameReceived(game: Game) {
+        for (subscriber in gameActionListeners) {
+            subscriber.onGameReceived(game)
+        }
+    }
+
 
     fun addGameActionListener(listener: GameActionsListener) {
         gameActionListeners.add(listener)
@@ -101,6 +109,4 @@ class GameController private constructor() {
     fun removeGameActionListener(listener: GameActionsListener) {
         gameActionListeners.remove(listener)
     }
-
-
 }

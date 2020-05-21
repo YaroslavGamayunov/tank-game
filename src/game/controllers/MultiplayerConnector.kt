@@ -81,12 +81,17 @@ class MultiplayerConnector(var socket: Socket, var playerName: String) : IGameSe
     }
 
     // receives actions from server
-    override fun onReceive(sequence: GameActionSequence) {
+    override fun onSequenceReceived(sequence: GameActionSequence) {
         client.applyExternalActions(sequence)
         for (action in sequence.actions) {
             if (action is MoveBegin && action.playerID == getPlayerID()) {
                 executeActionSequence(client.makeYourMove())
             }
         }
+    }
+
+    // receives game from server
+    override fun onGameReceived(game: Game) {
+        client.setupGame(game)
     }
 }
