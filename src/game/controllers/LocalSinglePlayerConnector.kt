@@ -29,8 +29,8 @@ class LocalSinglePlayerConnector : IGameServerConnector {
         return 0
     }
 
-    override fun runConnector(client: IGameClient) {
-        this.client = client
+    override fun runConnector(factory: IGameClientFactory) {
+        this.client = factory.createClient(this)
 
         val gameStarted = GameActionSequence(-1)
         gameStarted.actions.add(GameStarted())

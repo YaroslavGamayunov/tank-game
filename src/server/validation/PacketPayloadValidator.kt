@@ -11,7 +11,7 @@ private val PAYLOAD_MAP = mapOf<PacketType, KClass<*>>(
         PacketType.PLAYER_JOINED to Player::class,
         PacketType.PLAYER_LEFT to Player::class,
         PacketType.GAME_STATE to GameState::class,
-        PacketType.PLAYER_MOVED to GameActionSequence::class)
+        PacketType.SHARED_ACTIONS to GameActionSequence::class)
 
 class PacketPayloadMismatchException(packet: ServerPacket, throwable: Throwable? = null) :
         ServerPacketValidationException("Server packet payload mismatch: found ${packet.payload::class}, " +

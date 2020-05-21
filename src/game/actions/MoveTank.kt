@@ -3,12 +3,11 @@ package game.actions
 import game.*
 import game.events.ActionEvent
 import game.events.IGameEvent
-import game.tools.Orientation
 import game.tools.Vector2
-import game.tools.isVacantHalfInterval
+
 class MoveTank(val tankID : Int, val newPosition : Vector2) : GameAction(){
-    override fun invoke(visitor: IActionVisitor) {
-        visitor.onTankMove(this)
+    override fun invoke(visitor: IActionVisitor?) {
+        visitor?.onTankMove(this)
     }
 
     override fun invoke(game: Game, checkCorrectnessOnly: Boolean) : IGameEvent? {

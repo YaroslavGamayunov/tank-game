@@ -13,7 +13,7 @@ class Server(port: Int, private var packetProcessor: ServerIncomingPacketProcess
     init {
         try {
             serverSocket = ServerSocket(port)
-            println("Starting server on ${InetAddress.getLocalHost().hostAddress}")
+            System.err.println("Starting server on ${InetAddress.getLocalHost().hostAddress}")
             // TODO Add ability to control lifecycle
             start()
         } catch (e: IOException) {
@@ -21,15 +21,15 @@ class Server(port: Int, private var packetProcessor: ServerIncomingPacketProcess
         }
     }
 
-    /** Notifies all connections
-     * @param except Server connection that will not be notified
-     */
-    private fun notifyAll(obj: ServerPacket, except: ServerConnection? = null) {
+    private fun notifyAll(packet: BroadcastPacket) {
         for (connection in connectionSet) {
-            if (connection == except) {
+            if (packet.whiteList.isNotEmpty() && !packet.whiteList.contains(connection)) {
                 continue
             }
-            connection.sendData(obj)
+            if (packet.blackList.isNotEmpty() && packet.blackList.contains(connection)) {
+                continue
+            }
+            connection.sendData(packet.serverPacket)
         }
     }
 
@@ -42,22 +42,25 @@ class Server(port: Int, private var packetProcessor: ServerIncomingPacketProcess
 
                 connection.connectionCallback = object : ServerConnectionCallback {
                     override fun onReceive(serverPacket: ServerPacket) {
-                        println("Server received object $serverPacket")
-                        if (packetProcessor.onReceive(connection, serverPacket)) {
-                            notifyAll(serverPacket, except = connection)
+                        System.err.println("Server received object $serverPacket")
+
+                        var packetsForSharing: List<BroadcastPacket> =
+                                packetProcessor.onReceive(connection, serverPacket)
+
+                        for (broadcastPacket in packetsForSharing) {
+                            notifyAll(broadcastPacket)
                         }
                     }
 
                     override fun onConnectionInterrupted() {
-                        println("Client disconnected: $connection")
+                        System.err.println("Client disconnected: $connection")
                         connectionSet.remove(connection)
 
-                        // TODO redesign this, it's inappropriate
-                        var packet = packetProcessor.onConnectionInterrupted(connection)
-                        if (packet != null) {
-                            if (packet.shouldBeShared) {
-                                notifyAll(packet)
-                            }
+                        var packetsForSharing: List<BroadcastPacket> =
+                                packetProcessor.onConnectionInterrupted(connection)
+
+                        for (broadcastPacket in packetsForSharing) {
+                            notifyAll(broadcastPacket)
                         }
                     }
                 }

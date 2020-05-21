@@ -88,8 +88,8 @@ class LocalMultiplayerConnector(val server: LocalMultiplayerServer, tankPosition
 
     override fun getPlayerID(): Int = playerID
 
-    override fun runConnector(client: IGameClient) {
-        this.client = client
+    override fun runConnector(factory: IGameClientFactory) {
+        this.client = factory.createClient(this)
     }
 
     fun pushSequence(actionSequence: GameActionSequence){

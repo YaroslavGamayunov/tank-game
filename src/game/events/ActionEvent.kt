@@ -6,6 +6,6 @@ class ActionEvent(val operation: Operation) : GameEvent() {
         operation()
         return null
     }
-    override fun invoke(visitor: IEventVisitor) {}
+    override fun invoke(visitor: IEventVisitor?) {}
     
 }

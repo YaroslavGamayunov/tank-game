@@ -1,7 +1,6 @@
-import game.GameModel
-import game.GameServerProcessor
-import game.GameState
-import game.Player
+import game.*
+import game.actions.GameActionSequence
+import game.actions.applyAllActions
 import gui.GameStateListener
 import gui.MainScreen
 import gui.ServerLobbyScreen
@@ -20,36 +19,52 @@ class GameController private constructor() {
         val instance: GameController by lazy { HOLDER.INSTANCE }
     }
 
-    private var screens = arrayListOf<JFrame>(MainScreen())
+    var gameActionListeners = ArrayList<GameActionsListener>()
+    private var screens = arrayListOf<JFrame>()
 
-    private var gameModel: GameModel? = null
+    var gameModel: GameModel? = null
     private var server: Server? = null
+    var isGuiUsed: Boolean = false
 
     init {
-        println("GameController created")
+        System.err.println("GameController created")
+        changeScreen(MainScreen())
     }
 
     private fun changeScreen(screen: JFrame) {
         //currentScreen.dispatchEvent(WindowEvent(currentScreen, WindowEvent.WINDOW_CLOSED));
-        screens.add(screen)
+        if (isGuiUsed) {
+            screens.add(screen)
+            screen.isVisible = true
+        }
     }
 
-    fun getGameCopy() = gameModel?.getGameCopy()
+    fun getGame(copy: Boolean = true) = if (copy) gameModel?.getGame()?.copy() else gameModel?.getGame()
 
+    fun getLocalPlayer() = gameModel?.localPlayer
+
+    // These 3 methods below are designed for connecting and hosting server by local user
     fun connectToServer(playerName: String, hostName: String, port: Int) {
         gameModel = GameModel(Socket(hostName, port))
+        gameModel!!.addPlayer(Player(playerName), isLocalPlayer = true)
+
         changeScreen(ServerLobbyScreen(hostName, port))
-        gameModel!!.addPlayer(Player(playerName))
+    }
+
+    fun connectToServer(playerName: String, socket: Socket) {
+        gameModel = GameModel(socket)
+        gameModel!!.addPlayer(Player(playerName), isLocalPlayer = true)
+
+        changeScreen(ServerLobbyScreen(socket.inetAddress.toString(), socket.port))
     }
 
     fun hostServer(playerName: String, port: Int) {
         server = Server(port, GameServerProcessor())
 
         val hostName = InetAddress.getLocalHost().hostAddress
-        gameModel = GameModel(Socket(hostName, port))
-        changeScreen(ServerLobbyScreen(hostName, port))
-        gameModel!!.addPlayer(Player(playerName))
+        connectToServer(playerName, hostName, port)
     }
+
 
     fun onGameStateChanged(state: GameState) {
         for (screen in screens) {
@@ -57,5 +72,41 @@ class GameController private constructor() {
                 (screen as GameStateListener).onGameStateChanged(state)
             }
         }
+    }
+
+
+    // sends local player actions to the server
+    fun onPlayerMoved(sequence: GameActionSequence, shouldUpdateModel: Boolean = false) {
+        gameModel?.applyActionsToServer(sequence)
+
+        if (shouldUpdateModel) {
+            for (action in sequence.actions) {
+                gameModel?.getGame()?.let { applyAllActions(it, action) }
+            }
+        }
+    }
+
+
+    // receives actions from server
+    fun onActionsReceived(sequence: GameActionSequence) {
+        for (subscriber in gameActionListeners) {
+            subscriber.onSequenceReceived(sequence)
+        }
+    }
+
+//    // receives actions from server (happens when player connects to server)
+//    fun onGameReceived(game: Game) {
+//        for (subscriber in gameActionListeners) {
+//            subscriber.onGameReceived(game)
+//        }
+//    }
+
+
+    fun addGameActionListener(listener: GameActionsListener) {
+        gameActionListeners.add(listener)
+    }
+
+    fun removeGameActionListener(listener: GameActionsListener) {
+        gameActionListeners.remove(listener)
     }
 }
