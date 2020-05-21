@@ -6,7 +6,8 @@ import javax.imageio.ImageIO
 
 class SwingRendererFactory : IRendererFactory<SwingRenderingContext> {
     override fun getSpriteRenderer(visualObject : Sprite<SwingRenderingContext>, assetName : String) : IVisualObjectRenderer<SwingRenderingContext> {
-        val image = ImageIO.read(File("assets/sprites/$assetName"))
+
+        val image =  SwingAssetLoader.instance.getImage("/main/resources/sprites/$assetName")
         return SwingSpriteRenderer(visualObject, image);
     }
 
@@ -14,7 +15,8 @@ class SwingRendererFactory : IRendererFactory<SwingRenderingContext> {
         tilemap: Sprite<SwingRenderingContext>,
         assetName: String
     ): IVisualObjectRenderer<SwingRenderingContext> {
-        val image = ImageIO.read(File("assets/sprites/$assetName"))
+
+        val image =  SwingAssetLoader.instance.getImage("/main/resources/sprites/$assetName")
         return SwingTilemapRenderer(tilemap, image)
     }
 
