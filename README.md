@@ -10,4 +10,19 @@
 
 Пример текущей версии консольной игры вы можете увидеть в файле *src/example.txt*
 
-![А вот uml-диаграмма юнитов](doc/Package_units.png)
+# **Запуск**
+Мы перевели наш проект на Gradle, поэтому теперь собирать очень просто. Для этого нужно вызвать следущую команду из корня проекта:
+```bash
+gradle build
+```
+Как установить Gradle, можно прочитать [здесь](https://docs.gradle.org/current/userguide/installation.html)
+
+После этого в папке *build/libs* будет лежать собранный jar-файл. Чтобы запустить jar,
+ должна быть установлена желательно последняя версия JRE, ее можно загрузить [здесь](https://www.oracle.com/java/technologies/javase-jre8-downloads.html)
+ 
+ после чего для запуска используйте команду
+ ```bash
+ java -jar TankGame.jar
+ ```
+
+
