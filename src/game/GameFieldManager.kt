@@ -5,6 +5,7 @@ import game.objects.GameObject
 import game.objects.GamePlayer
 import game.tools.Orientation
 import game.tools.Vector2
+import game.units.Obstacle
 import game.units.Tank
 
 class GameFieldManager(var gameState: GameState, val minPlayersForStart: Int = 2) {
@@ -29,35 +30,65 @@ class GameFieldManager(var gameState: GameState, val minPlayersForStart: Int = 2
         return gamePlayerIds[currentMovePlayerIndex]
     }
 
+    fun addPrelimObject(obj : GameObject){
+        game.objects.add(obj)
+        preliminaryActions.addAction(ObjectsCreated(obj))
+    }
+
     fun onPlayerConnected(player: GamePlayer): GameActionSequence {
         System.err.println("Field manager detected connection")
         game.objects.add(player)
         player.linkIdentifiers(game)
         playersConnected++
+        preliminaryActions.addAction(ObjectsCreated(player))
 
-        var tankPosition: Vector2
+        if(playersConnected == 1){
 
-        if (playersConnected == 1) {
-            tankPosition = Vector2(0, 0)
-        } else {
-            tankPosition = Vector2(10, 0)
+            addPrelimObject(Obstacle(game.vacantID(), Vector2(-5, 4)))
+            addPrelimObject(Obstacle(game.vacantID(), Vector2(-4, 3)))
+            addPrelimObject(Obstacle(game.vacantID(), Vector2(-4, 4)))
+            addPrelimObject(Obstacle(game.vacantID(), Vector2(-4, 6)))
+            addPrelimObject(Obstacle(game.vacantID(), Vector2(-3, 6)))
+            addPrelimObject(Obstacle(game.vacantID(), Vector2(-2, 3)))
+            addPrelimObject(Obstacle(game.vacantID(), Vector2(-2, 6)))
+            addPrelimObject(Obstacle(game.vacantID(), Vector2(-2, 7)))
+            addPrelimObject(Obstacle(game.vacantID(), Vector2(-1, 3)))
+            addPrelimObject(Obstacle(game.vacantID(), Vector2(0, 5)))
+            addPrelimObject(Obstacle(game.vacantID(), Vector2(1, 3)))
+            addPrelimObject(Obstacle(game.vacantID(), Vector2(2, 3)))
+            addPrelimObject(Obstacle(game.vacantID(), Vector2(2, 6)))
+            addPrelimObject(Obstacle(game.vacantID(), Vector2(2, 7)))
+            addPrelimObject(Obstacle(game.vacantID(), Vector2(3, 3)))
+            addPrelimObject(Obstacle(game.vacantID(), Vector2(3, 4)))
+            addPrelimObject(Obstacle(game.vacantID(), Vector2(3, 7)))
         }
 
-        val tank = Tank(
+        for (ypos in 1..5) {
+            var tankPosition: Vector2
+
+            if (playersConnected == 1) {
+                tankPosition = Vector2(-2 + ypos, 0)
+            } else {
+                tankPosition = Vector2(-2 + ypos, 10)
+            }
+
+            val tank = Tank(
                 objectID = game.vacantID(),
                 position = tankPosition,
                 damage = 2U,
                 moveDistance = 4,
                 health = 4,
                 playerID = player.objectID,
-                orientation = Orientation.UP)
+                orientation = if (playersConnected == 1) Orientation.UP else Orientation.DOWN
+            )
 
 
-        game.objects.add(tank)
-        tank.linkIdentifiers(game)
+            game.objects.add(tank)
+            tank.linkIdentifiers(game)
 
-        preliminaryActions.addAction(ObjectsCreated(player))
-        preliminaryActions.addAction(ObjectsCreated(tank))
+
+            preliminaryActions.addAction(ObjectsCreated(tank))
+        }
         if (playersConnected == minPlayersForStart) {
             preliminaryActions.addAction(GameStarted())
             for ((_, player) in gameState.players) {

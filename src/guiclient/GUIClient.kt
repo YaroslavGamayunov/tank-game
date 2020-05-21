@@ -38,6 +38,8 @@ class GUIClient<RenderingContext : IRenderingContext>(server: IGameServerConnect
                 synchronized(context) {
                     scene.update(context.createFrameInput(delta))
                 }
+
+                Thread.sleep(20)
                 context.renderObjectTree(scene)
             }
             scene.destroy()
