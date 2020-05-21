@@ -11,7 +11,6 @@ import guiclient.tools.Vector3
 import game.tools.Orientation
 import game.tools.Vector2
 import game.units.Obstacle
-import javafx.geometry.Pos
 import kotlin.concurrent.thread
 
 
