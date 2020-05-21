@@ -28,6 +28,8 @@ class GameModel(socket: Socket) : ServerConnectionCallback {
     // TODO: Create callbacks for move demanded and gamestatechanged
     override fun onReceive(serverPacket: ServerPacket) {
         System.err.println("Game model received object from server: ${serverPacket}")
+        printPayload(serverPacket)
+        
         when (serverPacket.type) {
             PacketType.GAME_STATE -> {
                 isGameStateReceived = true
@@ -47,8 +49,6 @@ class GameModel(socket: Socket) : ServerConnectionCallback {
 
             PacketType.SHARED_ACTIONS -> applyPlayerActions(serverPacket.payload as GameActionSequence)
         }
-
-        printPayload(serverPacket)
         GameController.instance.onGameStateChanged(state)
     }
 

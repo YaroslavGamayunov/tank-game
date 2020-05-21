@@ -1,5 +1,6 @@
 import game.*
 import game.actions.GameActionSequence
+import game.actions.applyAllActions
 import gui.GameStateListener
 import gui.MainScreen
 import gui.ServerLobbyScreen
@@ -75,8 +76,14 @@ class GameController private constructor() {
 
 
     // sends local player actions to the server
-    fun onPlayerMoved(sequence: GameActionSequence) {
+    fun onPlayerMoved(sequence: GameActionSequence, shouldUpdateModel: Boolean = false) {
         gameModel?.applyActionsToServer(sequence)
+        
+        if (shouldUpdateModel) {
+            for (action in sequence.actions) {
+                gameModel?.getGame()?.let { applyAllActions(it, action) }
+            }
+        }
     }
 
 

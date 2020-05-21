@@ -9,5 +9,8 @@ fun printPayload(packet: ServerPacket) {
         for (action in actionSequence.actions) {
             System.err.println(action)
         }
+        if (actionSequence.actions.isEmpty()) {
+            System.err.println("it is empty :(")
+        }
     }
 }

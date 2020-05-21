@@ -76,7 +76,7 @@ class MultiplayerConnector(var socket: Socket, var playerName: String) : IGameSe
 
     // sends actions to server
     private fun executeActionSequence(sequence: GameActionSequence) {
-        GameController.instance.onPlayerMoved(sequence)
+        GameController.instance.onPlayerMoved(sequence, shouldUpdateModel = true)
         if (sequence.playerID != client.owner.objectID) client.applyExternalActions(sequence)
     }
 
