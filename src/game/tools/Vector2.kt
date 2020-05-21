@@ -15,6 +15,10 @@ data class Vector2(val x : Int, val y : Int) : Serializable{
         return Vector2(x - other.x, y - other.y)
     }
 
+    operator fun div(other: Int) : Vector2{
+        return Vector2(x/other, y/other)
+    }
+
     val orientation : Orientation?
         get(){
             val absolute = manhattanAbs

@@ -13,10 +13,7 @@ import java.lang.IndexOutOfBoundsException
 import java.lang.NumberFormatException
 import kotlin.system.exitProcess
 
-class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IActionVisitor, IEventVisitor {
-    val game : Game = server.getGameCopy()
-    override val owner : GamePlayer = game.getObjectByID(server.getPlayerID()) as GamePlayer
-
+open class CLIGameClient(server: IGameServerConnector) : GameClient(server), IActionVisitor, IEventVisitor {
     init{
         printLineToOutput("Starting CLI client.....")
         printLineToOutput("List of provided game objects")
@@ -25,13 +22,14 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
         }
     }
 
+    protected var lastSequence = GameActionSequence(owner.objectID)
     override fun makeYourMove() : GameActionSequence {
         printLineToOutput("Your turn, mister...")
         printLineToOutput("Type 'act [action_name] [args]' to make action")
         printLineToOutput("Type 'end' to make your turn and send it to other players")
         printLineToOutput("Type 'exit' to close application")
 
-        val seq = GameActionSequence(owner.objectID)
+        lastSequence = GameActionSequence(owner.objectID)
 
         var waitForInput = true
         var action : IGameAction? = null
@@ -91,10 +89,7 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
             }
             if(action!=null){
                 try {
-                    var event =  action(game)
-                    action(this)
-                    seq.actions.add(action)
-                    processEventResult(event)
+                    applyMyAction(action, lastSequence)
 
                 }catch (ex : IllegalActionException){
                     printErrorToOutput(ex.message?:"Some unknown illegal action")
@@ -103,17 +98,22 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
                 }
 
             }
-
-
-
         }
-        return seq
+        return lastSequence
+    }
+
+    protected fun applyMyAction(action : IGameAction, seq : GameActionSequence){
+        var event =  action(game)
+        action(this)
+        seq.actions.add(action)
+        processEventResult(event)
     }
 
     private fun processEventResult(initialEvent: IGameEvent?){
         var event = initialEvent
         while(event != null){
             val next = event()
+            gameStateChange()
             event(this)
             event = next
         }
@@ -121,13 +121,16 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
 
 
     override fun applyExternalActions(sequence: GameActionSequence) {
-      //  printLineToOutput("Action sequence has come owner = [Player ${sequence.playerID}]")
         for(action in sequence.actions){
             val event = action(game)
+            gameStateChange()
             action(this)
             processEventResult(event)
         }
-      //  printLineToOutput("End of action sequence")
+
+    }
+
+    protected open fun gameStateChange(){
 
     }
 
