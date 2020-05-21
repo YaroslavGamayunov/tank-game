@@ -14,6 +14,7 @@ class Server(port: Int, private var packetProcessor: ServerIncomingPacketProcess
         try {
             serverSocket = ServerSocket(port)
             println("Starting server on ${InetAddress.getLocalHost().hostAddress}")
+            // TODO Add ability to control lifecycle
             start()
         } catch (e: IOException) {
             e.printStackTrace()
