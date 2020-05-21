@@ -185,11 +185,4 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
     override fun onUnitDestroyed(event: UnitDestroyed) {
         printLineToOutput("Destroyed unit : ${event.unit.toString()}")
     }
-
-    override fun setupGame(game: Game) {
-        for (gameObj in game.objects) {
-            gameObj.linkIdentifiers(game)
-        }
-        this.game = game
-    }
 }

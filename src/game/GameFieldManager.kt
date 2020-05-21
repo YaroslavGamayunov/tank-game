@@ -15,6 +15,7 @@ class GameFieldManager(var gameState: GameState, val minPlayersForStart: Int = 2
 
     private var game = gameState.game!!
 
+    private var preliminaryActions = GameActionSequence(-1)
     fun createLocalPlayer(): GamePlayer {
         var player = GamePlayer(game.vacantID())
         return player
@@ -55,17 +56,17 @@ class GameFieldManager(var gameState: GameState, val minPlayersForStart: Int = 2
         game.objects.add(tank)
         tank.linkIdentifiers(game)
 
-        val addSeq = GameActionSequence(player.objectID)
-        addSeq.addAction(ObjectsCreated(player))
-        addSeq.addAction(ObjectsCreated(tank))
+        preliminaryActions.addAction(ObjectsCreated(player))
+        preliminaryActions.addAction(ObjectsCreated(tank))
         if (playersConnected == minPlayersForStart) {
-            addSeq.addAction(GameStarted())
+            preliminaryActions.addAction(GameStarted())
             for ((_, player) in gameState.players) {
                 player.localPlayerInstance?.objectID?.let { gamePlayerIds.add(it) }
             }
-            addSeq.addAction(MoveBegin(changeCurrentMovePlayer()))
+            preliminaryActions.addAction(MoveBegin(changeCurrentMovePlayer()))
+            return preliminaryActions
         }
-        return addSeq
+        return GameActionSequence(-1)
     }
 
     // Receives actions sent from server and returns actions that all players should receive

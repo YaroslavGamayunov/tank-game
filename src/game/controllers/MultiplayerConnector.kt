@@ -89,9 +89,4 @@ class MultiplayerConnector(var socket: Socket, var playerName: String) : IGameSe
             }
         }
     }
-
-    // receives game from server
-    override fun onGameReceived(game: Game) {
-        client.setupGame(game)
-    }
 }

@@ -94,12 +94,12 @@ class GameController private constructor() {
         }
     }
 
-    // receives actions from server (happens when player connects to server)
-    fun onGameReceived(game: Game) {
-        for (subscriber in gameActionListeners) {
-            subscriber.onGameReceived(game)
-        }
-    }
+//    // receives actions from server (happens when player connects to server)
+//    fun onGameReceived(game: Game) {
+//        for (subscriber in gameActionListeners) {
+//            subscriber.onGameReceived(game)
+//        }
+//    }
 
 
     fun addGameActionListener(listener: GameActionsListener) {
