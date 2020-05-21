@@ -3,15 +3,20 @@ package game
 import GameController
 import game.actions.GameActionSequence
 import game.actions.applyAllActions
-import server.PacketType
-import server.ServerConnection
-import server.ServerConnectionCallback
-import server.ServerPacket
+import server.*
 import java.net.Socket
 
 class GameModel(socket: Socket) : ServerConnectionCallback {
     private var connection: ServerConnection = ServerConnection(socket)
     var state: GameState = GameState()
+        set(state) {
+            for (gameObject in state.game?.objects!!) {
+                state.game?.let {
+                    gameObject.linkIdentifiers(state.game!!)
+                }
+            }
+            field = state
+        }
     var localPlayer: Player? = null
     var isGameStateReceived: Boolean = false
         private set
@@ -43,6 +48,7 @@ class GameModel(socket: Socket) : ServerConnectionCallback {
             PacketType.SHARED_ACTIONS -> applyPlayerActions(serverPacket.payload as GameActionSequence)
         }
 
+        printPayload(serverPacket)
         GameController.instance.onGameStateChanged(state)
     }
 

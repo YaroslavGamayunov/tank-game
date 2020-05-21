@@ -21,7 +21,7 @@ class GameFieldManager(var gameState: GameState, val minPlayersForStart: Int = 2
     }
 
     fun changeCurrentMovePlayer(): Int {
-        currentMovePlayerIndex = (currentMovePlayerIndex++) % gamePlayerIds.size
+        currentMovePlayerIndex = (currentMovePlayerIndex + 1) % gamePlayerIds.size
         var currentMovePlayer = gamePlayerIds[currentMovePlayerIndex]
         var action = MoveBegin(currentMovePlayer)
         applyAllActions(game, action)

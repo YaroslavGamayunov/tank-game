@@ -54,6 +54,10 @@ class GameServerProcessor() : ServerIncomingPacketProcessor {
             var actionsForSharing = fieldManager.onPlayerMoved(player, actions)
 
             var packetList = arrayListOf<BroadcastPacket>()
+
+            var receivedActionsPacket = ServerPacket(PacketType.SHARED_ACTIONS, actions)
+            packetList.add(BroadcastPacket.withBlackList(receivedActionsPacket, connection))
+
             var actionsPacket = ServerPacket(PacketType.SHARED_ACTIONS, actionsForSharing)
             packetList.add(BroadcastPacket.withWhiteList(actionsPacket))
 
