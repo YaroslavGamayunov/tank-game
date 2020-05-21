@@ -36,7 +36,12 @@ class GameServerProcessor() : ServerIncomingPacketProcessor {
 
             player.localPlayerInstance = fieldManager.createLocalPlayer()
 
-            var gameStatePacket = ServerPacket(PacketType.GAME_STATE, globalGameState.copySerializable())
+
+            // weird trick
+            var gameStateForSend = globalGameState.copySerializable() as GameState
+            gameStateForSend.game = Game()
+
+            var gameStatePacket = ServerPacket(PacketType.GAME_STATE, gameStateForSend)
 
             var packetList = arrayListOf<BroadcastPacket>()
             packetList.add(BroadcastPacket.withWhiteList(gameStatePacket, connection))
