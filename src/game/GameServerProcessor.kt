@@ -41,6 +41,7 @@ class GameServerProcessor() : ServerIncomingPacketProcessor {
             var gameStateForSend = globalGameState.copySerializable() as GameState
             gameStateForSend.game = Game()
 
+
             var gameStatePacket = ServerPacket(PacketType.GAME_STATE, gameStateForSend)
 
             var packetList = arrayListOf<BroadcastPacket>()

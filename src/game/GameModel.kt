@@ -3,6 +3,7 @@ package game
 import GameController
 import game.actions.GameActionSequence
 import game.actions.applyAllActions
+import logging.logInfo
 import server.*
 import java.net.Socket
 
@@ -57,10 +58,19 @@ class GameModel(socket: Socket) : ServerConnectionCallback {
 
     private fun applyPlayerActions(sequence: GameActionSequence) {
         var game: Game = state.game ?: return
-        for (action in sequence.actions) {
-            applyAllActions(game, action)
+        // Here we have to lock on any subscriber
+        // This is a quite fragile trick but this is only way ....
+
+        val any = GameController.instance.gameActionListeners.first()
+        logInfo(this, "Syncing on $any")
+        synchronized(any) {
+            logInfo(this, "Start processing upcoming events")
+            for (action in sequence.actions) {
+                applyAllActions(game, action)
+            }
+
+            GameController.instance.onActionsReceived(sequence)
         }
-        GameController.instance.onActionsReceived(sequence)
     }
 
     fun applyActionsToServer(sequence: GameActionSequence) {

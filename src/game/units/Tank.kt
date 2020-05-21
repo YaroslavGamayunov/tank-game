@@ -1,5 +1,6 @@
 package game.units
 
+import game.actions.IllegalTankRotationException
 import game.objects.IPositionProvider
 import game.tools.*
 
@@ -29,6 +30,9 @@ open class Tank(objectID: Int, playerID: Int, position: Vector2, health: Int, or
      */
     open fun canShootPoint(position: Vector2, positionProvider: IPositionProvider) : Boolean{
         val dir = position - this.position
+        if(dir.orientation == null){
+            throw IllegalTankRotationException("Cannot shoot this way");
+        }
         if(dir.orientation!! != orientation)return false
         return positionProvider.isVacantHalfInterval(this.position + orientation.direction,
             position, orientation)

@@ -13,9 +13,9 @@ class LocalSinglePlayerConnector : IGameServerConnector {
 
     init {
          game.objects.add(GamePlayer(0))
-         game.objects.add(Tank(1,0, Vector2(0, 0),8, Orientation.UP, 4U, 2))
-         game.objects.add(Tank(2,0, Vector2(1, 0),8, Orientation.UP, 4U, 2))
-
+         game.objects.add(Tank(1,0, Vector2(0, 2),8, Orientation.RIGHT, 4U, 2))
+         game.objects.add(Tank(2,0, Vector2(2, 2),8, Orientation.LEFT, 4U, 2))
+         game.objects.add(Obstacle(3,Vector2(1,0)))
          for(x in game.objects){
              x.linkIdentifiers(game)
          }
@@ -29,8 +29,8 @@ class LocalSinglePlayerConnector : IGameServerConnector {
         return 0
     }
 
-    override fun runConnector(client: IGameClient) {
-        this.client = client
+    override fun runConnector(factory: IGameClientFactory) {
+        this.client = factory.createClient(this)
 
         val gameStarted = GameActionSequence(-1)
         gameStarted.actions.add(GameStarted())

@@ -5,6 +5,9 @@ import game.GameActionsListener
 import game.actions.GameActionSequence
 import game.actions.GameStarted
 import game.actions.MoveBegin
+import game.actions.WrongIdException
+import game.objects.GamePlayer
+import logging.logInfo
 import java.net.Socket
 
 class ServerDataNotReceivedException(message: String) : Throwable(message)
@@ -17,6 +20,7 @@ class MultiplayerConnector(var socket: Socket, var playerName: String) : IGameSe
         while (true) {
             try {
                 getGameCopy()
+
             } catch (e: ServerDataNotReceivedException) {
                 Thread.sleep(100)
                 continue
@@ -27,11 +31,19 @@ class MultiplayerConnector(var socket: Socket, var playerName: String) : IGameSe
 
     override fun getGameCopy(): Game {
         var gameCopy = GameController.instance.getGame()
+        val playerID = getPlayerID()
 
         if (gameCopy == null) {
             throw ServerDataNotReceivedException("Game instance hasn't been received by client yet")
         }
 
+        try {
+            gameCopy.getObjectByID(playerID)
+        }catch (ex : WrongIdException){
+            gameCopy.objects.add(GamePlayer(playerID))
+        }
+
+        logInfo(this, "Obtaining game copy")
         return gameCopy
     }
 
@@ -55,12 +67,15 @@ class MultiplayerConnector(var socket: Socket, var playerName: String) : IGameSe
         return id
     }
 
-    override fun runConnector(client: IGameClient) {
-        this.client = client
-        GameController.instance.addGameActionListener(this)
-        GameController.instance.connectToServer(playerName, socket)
-        // todo rebuld because it blocks the thread
-        waitForConnection()
+    override fun runConnector(factory: IGameClientFactory) {
+        synchronized(this) {
+            GameController.instance.addGameActionListener(this)
+            GameController.instance.connectToServer(playerName, socket)
+            // todo rebuild because it blocks the thread
+
+            waitForConnection()
+            this.client = factory.createClient(this)
+        }
 //        val gameStarted = GameActionSequence(-1)
 //        gameStarted.actions.add(GameStarted())
 //        executeActionSequence(gameStarted)
@@ -81,11 +96,14 @@ class MultiplayerConnector(var socket: Socket, var playerName: String) : IGameSe
     }
 
     // receives actions from server
-    override fun onSequenceReceived(sequence: GameActionSequence) {
-        client.applyExternalActions(sequence)
-        for (action in sequence.actions) {
-            if (action is MoveBegin && action.playerID == getPlayerID()) {
-                executeActionSequence(client.makeYourMove())
+    override fun onSequenceReceived(sequence: GameActionSequence){
+        synchronized(this) {
+            logInfo(this, "Pushing sequence to client")
+            client.applyExternalActions(sequence)
+            for (action in sequence.actions) {
+                if (action is MoveBegin && action.playerID == getPlayerID()) {
+                    executeActionSequence(client.makeYourMove())
+                }
             }
         }
     }

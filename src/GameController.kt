@@ -19,7 +19,7 @@ class GameController private constructor() {
         val instance: GameController by lazy { HOLDER.INSTANCE }
     }
 
-    private var gameActionListeners = ArrayList<GameActionsListener>()
+    var gameActionListeners = ArrayList<GameActionsListener>()
     private var screens = arrayListOf<JFrame>()
 
     var gameModel: GameModel? = null
