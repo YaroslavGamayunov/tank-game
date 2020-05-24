@@ -13,10 +13,9 @@ import java.lang.IndexOutOfBoundsException
 import java.lang.NumberFormatException
 import kotlin.system.exitProcess
 
-class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IActionVisitor, IEventVisitor {
-    val game : Game = server.getGameCopy()
-    override val owner : GamePlayer = game.getObjectByID(server.getPlayerID()) as GamePlayer
 
+
+open class CLIGameClient(server: IGameServerConnector) : GameClient(server), IActionVisitor, IEventVisitor {
     init{
         printLineToOutput("Starting CLI client.....")
         printLineToOutput("List of provided game objects")
@@ -25,95 +24,97 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
         }
     }
 
+    protected var lastSequence = GameActionSequence(owner.objectID)
     override fun makeYourMove() : GameActionSequence {
+
         printLineToOutput("Your turn, mister...")
         printLineToOutput("Type 'act [action_name] [args]' to make action")
         printLineToOutput("Type 'end' to make your turn and send it to other players")
         printLineToOutput("Type 'exit' to close application")
 
-        val seq = GameActionSequence(owner.objectID)
+        lastSequence = GameActionSequence(owner.objectID)
 
         var waitForInput = true
-        var action : IGameAction? = null
-        while(waitForInput){
+        var action: IGameAction? = null
+        while (waitForInput) {
             val command = readLineFromInput()
             val args = command.split(' ')
 
-            try{
-            when(args[0]){
-                "end" ->{
-                    waitForInput = false
-                    action = MoveEnd(owner.objectID)
-                }
+            try {
+                when (args[0]) {
+                    "end" -> {
+                        waitForInput = false
+                        action = MoveEnd(owner.objectID)
+                    }
 
-                "act"->{
-                    when(args[1]){
-                        "tank"->{
-                            val tankID = args[2].toInt()
-                            when(args[3]){
-                                "move"->{
-                                    action = MoveTank(tankID,
-                                        Vector2(args[4].toInt(), args[5].toInt())
-                                    )
-                                }
+                    "act" -> {
+                        when (args[1]) {
+                            "tank" -> {
+                                val tankID = args[2].toInt()
+                                when (args[3]) {
+                                    "move" -> {
+                                        action = MoveTank(tankID,
+                                                Vector2(args[4].toInt(), args[5].toInt())
+                                        )
+                                    }
 
-                                "rotate"->{
-                                    action = RotateTank(tankID, Orientation.valueOf(args[4]))
-                                }
+                                    "rotate" -> {
+                                        action = RotateTank(tankID, Orientation.valueOf(args[4]))
+                                    }
 
-                                "shoot"->{
-                                    action = TankShoot(tankID, args[4].toInt())
+                                    "shoot" -> {
+                                        action = TankShoot(tankID, args[4].toInt())
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                "exit"->{
-                    printLineToOutput("Goodbye player. Didn't expect you to be so scared of battle. It seems to me tha" +
-                            "t you are not a real knight with brave heart. So sorry about it")
-                    exitProcess(0)
+                    "exit" -> {
+                        printLineToOutput("Goodbye player. Didn't expect you to be so scared of battle. It seems to me tha" +
+                                "t you are not a real knight with brave heart. So sorry about it")
+                        exitProcess(0)
+                    }
                 }
-            }
-            }
-            catch (ex : IndexOutOfBoundsException){
-               printErrorToOutput("Invalid command")
-            }
-            catch (ex : IllegalArgumentException){
+            } catch (ex: IndexOutOfBoundsException) {
                 printErrorToOutput("Invalid command")
-            }
-            catch (ex :NumberFormatException){
+            } catch (ex: IllegalArgumentException) {
+                printErrorToOutput("Invalid command")
+            } catch (ex: NumberFormatException) {
                 printErrorToOutput("Invalid command")
             }
 
-            if(action == null){
+            if (action == null) {
                 printErrorToOutput("Unknown action")
             }
-            if(action!=null){
+            if (action != null) {
+                // TODO dont do this
+                //var game: Game = GameController.instance.getGame() ?: return seq
                 try {
-                    var event =  action(game)
-                    action(this)
-                    seq.actions.add(action)
-                    processEventResult(event)
-
-                }catch (ex : IllegalActionException){
-                    printErrorToOutput(ex.message?:"Some unknown illegal action")
-                }finally {
+                    applyMyAction(action, lastSequence)
+                } catch (ex: IllegalActionException) {
+                    printErrorToOutput(ex.message ?: "Some unknown illegal action")
+                } finally {
                     action = null
                 }
 
             }
-
-
-
         }
-        return seq
+        return lastSequence
     }
 
-    private fun processEventResult(initialEvent: IGameEvent?){
+    protected fun applyMyAction(action : IGameAction, seq : GameActionSequence){
+        var event =  action(game)
+        action(this)
+        seq.actions.add(action)
+        processEventResult(event)
+    }
+
+    private fun processEventResult(initialEvent: IGameEvent?) {
         var event = initialEvent
-        while(event != null){
+        while (event != null) {
             val next = event()
+            gameStateChange()
             event(this)
             event = next
         }
@@ -121,25 +122,28 @@ class CLIGameClient(override val server: IGameServerConnector) : IGameClient, IA
 
 
     override fun applyExternalActions(sequence: GameActionSequence) {
-      //  printLineToOutput("Action sequence has come owner = [Player ${sequence.playerID}]")
         for(action in sequence.actions){
+
             val event = action(game)
+            gameStateChange()
             action(this)
             processEventResult(event)
         }
-      //  printLineToOutput("End of action sequence")
+    }
+
+    protected open fun gameStateChange(){
 
     }
 
-    private fun readLineFromInput() : String{
+    private fun readLineFromInput(): String {
         return readLine() ?: ""
     }
 
-    private fun printLineToOutput(message : String){
-        println("[Client][Player ${owner.objectID}] $message" )
+    private fun printLineToOutput(message: String) {
+        println("[Client][Player ${owner.objectID}] $message")
     }
 
-    private fun printErrorToOutput(message: String){
+    private fun printErrorToOutput(message: String) {
         println("[ERROR] $message")
     }
 

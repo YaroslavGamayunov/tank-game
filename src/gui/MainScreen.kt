@@ -37,14 +37,14 @@ class MainScreen : JFrame() {
             }
 
             var dialogResult = JOptionPane.showConfirmDialog(
-                null, serverJoinDialog,
-                "Подключение к серверу", JOptionPane.OK_CANCEL_OPTION
+                    null, serverJoinDialog,
+                    "Подключение к серверу", JOptionPane.OK_CANCEL_OPTION
             )
             if (dialogResult == JOptionPane.OK_OPTION) {
                 GameController.instance.connectToServer(
-                    playerNameField.text,
-                    connectionHostNameField.text,
-                    connectionPortField.text.toInt()
+                        playerNameField.text,
+                        connectionHostNameField.text,
+                        connectionPortField.text.toInt()
                 )
             }
         }
@@ -63,8 +63,8 @@ class MainScreen : JFrame() {
 
 
             var dialogResult = JOptionPane.showConfirmDialog(
-                null, serverHostDialog,
-                "Cоздать сервер", JOptionPane.OK_CANCEL_OPTION
+                    null, serverHostDialog,
+                    "Cоздать сервер", JOptionPane.OK_CANCEL_OPTION
             )
             if (dialogResult == JOptionPane.OK_OPTION) {
                 GameController.instance.hostServer(playerNameField.text, hostPortField.text.toInt())
@@ -82,6 +82,6 @@ class MainScreen : JFrame() {
         setLocationRelativeTo(null)
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
         isResizable = false
-        isVisible = true
+        isVisible = false
     }
 }

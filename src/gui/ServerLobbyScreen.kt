@@ -7,7 +7,7 @@ import javax.swing.*
 
 class ServerLobbyScreen(hostName: String, port: Int) : JFrame(), GameStateListener {
     private var connectedPlayersListModel =
-        DefaultListModel<String>().apply { Font("Apple Casual", Font.PLAIN, 40) }
+            DefaultListModel<String>().apply { Font("Apple Casual", Font.PLAIN, 40) }
 
     init {
         contentPane.layout = BoxLayout(contentPane, BoxLayout.Y_AXIS)
@@ -36,7 +36,7 @@ class ServerLobbyScreen(hostName: String, port: Int) : JFrame(), GameStateListen
         setLocationRelativeTo(null)
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
 
-        isVisible = true
+        isVisible = false
     }
 
     override fun onGameStateChanged(state: GameState) {
