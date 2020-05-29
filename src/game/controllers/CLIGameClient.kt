@@ -186,4 +186,8 @@ open class CLIGameClient(server: IGameServerConnector) : GameClient(server), IAc
     override fun onUnitDestroyed(event: UnitDestroyed) {
         printLineToOutput("Destroyed unit : ${event.unit.toString()}")
     }
+
+    override fun onTankPlaced(action: TankPlacement) {
+        printLineToOutput("Tank has been placed")
+    }
 }

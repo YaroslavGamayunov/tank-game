@@ -25,23 +25,22 @@ open class RenderingScene<Context : IRenderingContext>
             camera.transform.position += Vector3(0.0, 1.0) * moveCoef
         }
         if('s' in input.keyPressed){
-            camera.transform.position += Vector3(0.0, -1.0) *moveCoef
+            camera.transform.position += Vector3(0.0, -1.0) * moveCoef
         }
         if('a' in input.keyPressed) {
-            camera.transform.position += Vector3(-1.0, 0.0)*moveCoef
+            camera.transform.position += Vector3(-1.0, 0.0) * moveCoef
         }
         if('d' in input.keyPressed){
-            camera.transform.position += Vector3(1.0, 0.0)*moveCoef
+            camera.transform.position += Vector3(1.0, 0.0) * moveCoef
         }
 
-        if('1' in input.keyPressed){
+        if('=' in input.keyPressed){
             camera.transform.scale *= scaleCoef
         }
 
-        if('2' in input.keyPressed){
+        if('-' in input.keyPressed) {
             camera.transform.scale *= 1.0 / scaleCoef
         }
-
      //   if('w' in input.keyPressed)
 
     }

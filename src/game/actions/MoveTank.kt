@@ -5,7 +5,7 @@ import game.events.ActionEvent
 import game.events.IGameEvent
 import game.tools.Vector2
 
-class MoveTank(val tankID : Int, val newPosition : Vector2) : GameAction(){
+class MoveTank(val tankID : Int, val newPosition : Vector2) : GameWarAction(){
     override fun invoke(visitor: IActionVisitor?) {
         visitor?.onTankMove(this)
     }

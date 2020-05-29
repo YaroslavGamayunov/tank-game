@@ -5,7 +5,7 @@ import game.events.ActionEvent
 import game.events.IGameEvent
 import game.tools.Orientation
 
-class RotateTank(val tankID: Int, val orientation: Orientation) : GameAction() {
+class RotateTank(val tankID: Int, val orientation: Orientation) : GameWarAction() {
     override fun invoke(visitor: IActionVisitor?) {
         visitor?.onTankTurned(this)
     }

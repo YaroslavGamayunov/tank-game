@@ -1,3 +1,4 @@
+import game.DebugServerProcessor
 import game.GameServerProcessor
 import game.controllers.*
 import server.Server
@@ -26,6 +27,11 @@ fun main(args: Array<String>) {
             if(args.size < 2) return viewDocs()
             val port = args[1].toInt()
             val server = Server(port, GameServerProcessor())
+        }
+
+        "-debugServer"->{
+            val port = 100
+            val server = Server(port, DebugServerProcessor())
         }
 
         "-client"->{

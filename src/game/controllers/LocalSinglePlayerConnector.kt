@@ -6,15 +6,16 @@ import game.objects.GamePlayer
 import game.tools.Orientation
 import game.tools.Vector2
 import game.units.*
+import game.units.tanks.Tank
 
 class LocalSinglePlayerConnector : IGameServerConnector {
     lateinit var client: IGameClient
     val game : Game = Game()
 
     init {
-         game.objects.add(GamePlayer(0))
-         game.objects.add(Tank(1,0, Vector2(0, 2),8, Orientation.RIGHT, 4U, 2))
-         game.objects.add(Tank(2,0, Vector2(2, 2),8, Orientation.LEFT, 4U, 2))
+         game.objects.add(GamePlayer(0, "Test user"))
+         game.objects.add(Tank(1, 0, Vector2(0, 2), 8, Orientation.RIGHT, 4U, 2))
+         game.objects.add(Tank(2, 0, Vector2(2, 2), 8, Orientation.LEFT, 4U, 2))
          game.objects.add(Obstacle(3,Vector2(1,0)))
          for(x in game.objects){
              x.linkIdentifiers(game)

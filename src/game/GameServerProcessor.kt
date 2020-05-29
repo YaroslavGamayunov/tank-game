@@ -12,13 +12,16 @@ import java.net.InetAddress
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-class GameServerProcessor() : ServerIncomingPacketProcessor {
+open class GameServerProcessor() : ServerIncomingPacketProcessor {
     private var playerIdByAddr = HashMap<InetAddress, String>()
-    private var globalGameState = GameState().apply { game = Game() }
+    protected var globalGameState = GameState().apply { game = Game() }
     private val validatorChain =
             ServerPacketValidatorChain(PacketPayloadValidator(), PlayerActionsValidator(globalGameState.game!!))
-    private var fieldManager = GameFieldManager(globalGameState)
+    private var fieldManager = createGameField()
 
+    protected open fun createGameField() : GameFieldManager{
+        return GameFieldManager(globalGameState)
+    }
 
     override fun onReceive(connection: ServerConnection, packet: ServerPacket): List<BroadcastPacket> {
         try {
@@ -34,7 +37,7 @@ class GameServerProcessor() : ServerIncomingPacketProcessor {
             playerIdByAddr[connection.getAddress()] = (packet.payload as Player).id
             globalGameState.players[player.id] = player
 
-            player.localPlayerInstance = fieldManager.createLocalPlayer()
+            player.localPlayerInstance = fieldManager.createLocalPlayer(player.name)
 
 
             // weird trick

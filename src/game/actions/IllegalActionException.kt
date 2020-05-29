@@ -1,8 +1,5 @@
 package game.actions
 
-import game.units.Tank
-import kotlin.reflect.KClass
-
 abstract class IllegalActionException( string: String? = null,throwable: Throwable? = null)
     : Throwable(string,throwable) {}
 
@@ -15,3 +12,5 @@ class IllegalTankMoveException(message : String) : IllegalActionException(messag
 class IllegalTankRotationException(message : String) : IllegalActionException(message)
 class IllegalAttackException(message: String) : IllegalActionException(message)
 class WrongIdException(objectID: Int) : IllegalActionException("Cannot find object with ID:$objectID")
+class WrongStageException(message: String) : IllegalActionException(message)
+class PlacementException(message: String) : IllegalActionException(message)

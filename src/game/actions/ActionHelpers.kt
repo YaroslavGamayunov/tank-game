@@ -3,12 +3,10 @@ package game.actions
 import game.Game
 import game.events.IGameEvent
 import game.events.UnitDestroyed
-import game.objects.IGamePlayerProperty
-import game.objects.IIdentityProvider
-import game.objects.IPositionProvider
+import game.objects.*
 import game.tools.Orientation
 import game.tools.Vector2
-import game.units.Tank
+import game.units.tanks.Tank
 import game.tools.*
 import game.units.GameUnit
 
@@ -74,8 +72,19 @@ fun Game.applyDamage(victim: GameUnit, attacker: GameUnit, damage: UInt): IGameE
 
 fun Vector2.assertAndGetOrientation() = orientation ?: throw IllegalTankMoveException("Cannot find direction")
 
+fun Game.assertWarStage() = if(isTankPlacementStage) throw WrongStageException("War hasn't begun") else null
+
+fun Game.assertPlacementStage() = if(!isTankPlacementStage) throw WrongStageException("War has begun") else null
+
 fun Tank.assertHasShots() = if (tempShots + 1 > maxShots)
     throw IllegalAttackException("Tank $objectID has only $maxShots shots") else null
+
+fun Game.assertCanPlace(pos: Vector2, player : GamePlayer){
+    if(getSolid(pos) != null) throw PlacementException("Cell is taken by unit ${getSolid(pos)?.toString()}")
+    if(objects.count{it is PlacementArea && it.inside(pos) && it.owner == player} == 0){
+        throw PlacementException("Cannot place tank in this area")
+    }
+}
 
 
 fun applyAllActions(game: Game, action: IGameAction) {

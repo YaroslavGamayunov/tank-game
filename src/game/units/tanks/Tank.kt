@@ -1,8 +1,9 @@
-package game.units
+package game.units.tanks
 
 import game.actions.IllegalTankRotationException
 import game.objects.IPositionProvider
 import game.tools.*
+import game.units.GameUnit
 
 open class Tank(objectID: Int, playerID: Int, position: Vector2, health: Int, orientation: Orientation,
                 val damage : UInt, val moveDistance : Int) : GameUnit(objectID, playerID, position, health
@@ -10,7 +11,7 @@ open class Tank(objectID: Int, playerID: Int, position: Vector2, health: Int, or
 {
     val maxShots = 1
     val maxTurns = 1
-
+    var name : String = "Unknown Tank"
     var orientation : Orientation = orientation
 
     //This variables store temporary information during the turn
@@ -39,7 +40,7 @@ open class Tank(objectID: Int, playerID: Int, position: Vector2, health: Int, or
     }
 
     override fun toString(): String {
-        return "{[Tank] id: $objectID owner: ${owner.toString()}}"
+        return "{[Tank $name] id: $objectID owner: ${owner.toString()}}"
     }
 
 

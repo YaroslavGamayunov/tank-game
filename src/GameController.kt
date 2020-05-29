@@ -60,10 +60,10 @@ class GameController private constructor() {
 
     fun hostServer(playerName: String, port: Int) {
         server = Server(port, GameServerProcessor())
-
         val hostName = InetAddress.getLocalHost().hostAddress
         connectToServer(playerName, hostName, port)
     }
+
 
 
     fun onGameStateChanged(state: GameState) {

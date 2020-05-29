@@ -4,7 +4,7 @@ import game.Game
 import game.events.ComplexActionEvent
 import game.events.IGameEvent
 
-class TankShoot(val tankID: Int, val aimID: Int) : GameAction() {
+class TankShoot(val tankID: Int, val aimID: Int) : GameWarAction() {
     override fun invoke(visitor: IActionVisitor?) {
         visitor?.onTankShot(this)
     }

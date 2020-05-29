@@ -1,8 +1,6 @@
 package guiclient
 
-import game.events.IGameEvent
 import game.objects.IGameLocated
-import game.units.Tank
 import guiclient.tools.Vector3
 import logging.logInfo
 

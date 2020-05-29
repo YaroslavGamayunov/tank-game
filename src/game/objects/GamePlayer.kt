@@ -2,8 +2,8 @@ package game.objects
 
 import game.objects.GameObject
 
-open class GamePlayer(objectID: Int) : GameObject(objectID) {
+open class GamePlayer(objectID: Int, val playerName : String) : GameObject(objectID) {
     override fun toString(): String {
-        return "{[Player] id: $objectID}"
+        return "{[$playerName ($objectID)]}"
     }
 }

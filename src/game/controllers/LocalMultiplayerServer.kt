@@ -9,7 +9,7 @@ import game.objects.GamePlayer
 import game.tools.Orientation
 import game.tools.Vector2
 import game.units.Obstacle
-import game.units.Tank
+import game.units.tanks.Tank
 
 class LocalMultiplayerServer {
     private val game = Game()
@@ -28,7 +28,7 @@ class LocalMultiplayerServer {
         val addSeq = GameActionSequence(-1)
 
         //Creating player object
-        val player = GamePlayer(game.vacantID())
+        val player = GamePlayer(game.vacantID(), "Player ${game.vacantID()}")
         game.objects.add(player)
         addSeq.addAction(ObjectsCreated(player))
         println("[Local Multiplayer Server] Player connected giving id = ${player.objectID}")
@@ -41,7 +41,8 @@ class LocalMultiplayerServer {
             moveDistance = 4,
             health = 4,
             playerID = player.objectID,
-            orientation = Orientation.UP)
+            orientation = Orientation.UP
+        )
 
 
         game.objects.add(tank)

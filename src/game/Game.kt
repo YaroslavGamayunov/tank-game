@@ -15,12 +15,15 @@ class Game : Serializable, IIdentityProvider, IPositionProvider, IActionList {
     //Data of game state
     val objects : ArrayList<GameObject> = arrayListOf()
     val actions : ArrayList<IGameAction> = arrayListOf()
+    val fieldSize = Vector2(50,50)
+
     var gameHasStarted = false
     var gameIsOver = false
     var currentMovePlayer = -1
     var waitingForPlayerToMove = false
-    val fieldSize = Vector2(50,50)
-    var friendlyFireAllowed = true
+    var friendlyFireAllowed = false
+    var isTankPlacementStage = true
+    var playersPlacedTanks = 0
 
     //Necessary methods
     override fun getObjectByID(objectID: Int): GameObject {
@@ -66,6 +69,10 @@ class Game : Serializable, IIdentityProvider, IPositionProvider, IActionList {
 
     override fun addAction(action: IGameAction) {
         actions.add(action)
+    }
+
+    fun getPlayersCount() : Int{
+        return objects.count { it is GamePlayer }
     }
 
     fun copy() : Game{

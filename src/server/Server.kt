@@ -4,7 +4,7 @@ import java.io.*
 import java.net.InetAddress
 import java.net.ServerSocket
 
-class Server(port: Int, private var packetProcessor: ServerIncomingPacketProcessor) : Thread() {
+open class Server(port: Int, private var packetProcessor: ServerIncomingPacketProcessor) : Thread() {
 
     private lateinit var serverSocket: ServerSocket
     var connectionSet: HashSet<ServerConnection> = HashSet()

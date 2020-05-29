@@ -40,7 +40,7 @@ class MultiplayerConnector(var socket: Socket, var playerName: String) : IGameSe
         try {
             gameCopy.getObjectByID(playerID)
         }catch (ex : WrongIdException){
-            gameCopy.objects.add(GamePlayer(playerID))
+            gameCopy.objects.add(GamePlayer(playerID, "Unauthorized player"))
         }
 
         logInfo(this, "Obtaining game copy")

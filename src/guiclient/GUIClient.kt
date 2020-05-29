@@ -2,15 +2,20 @@ package guiclient
 
 import game.actions.*
 import game.controllers.CLIGameClient
-import game.controllers.GameClient
 import game.controllers.IGameServerConnector
-import game.objects.GamePlayer
 import game.objects.IGameLocated
-import game.units.Tank
+import game.objects.PlacementSet
+import game.units.tanks.Tank
 import guiclient.tools.Vector3
 import game.tools.Orientation
 import game.tools.Vector2
 import game.units.Obstacle
+import guiclient.swing.SwingDefaultCamera
+import guiclient.swing.SwingObjectRenderer
+import guiclient.swing.SwingRenderingContext
+import logging.logInfo
+import logging.logWarning
+import java.awt.Graphics
 import kotlin.concurrent.thread
 
 
@@ -71,7 +76,10 @@ class GUIClient<RenderingContext : IRenderingContext>(server: IGameServerConnect
     fun renderState() = contextSync{
         removeMarkers()
         scene.childs.clear()
+
         scene.childs.add(Sprite<RenderingContext>(factory, "grass.jpg",true))
+
+
         for(obj in game.objects){
             if (obj is Tank) {
                 val tankSprite = PositionalObject<RenderingContext>(factory, if(obj.owner == owner) "tank.png" else "tankEnemy.png") {
@@ -145,6 +153,67 @@ class GUIClient<RenderingContext : IRenderingContext>(server: IGameServerConnect
                 gameObjects[obj.objectID] = obstacleSprite
                 scene.childs.add(obstacleSprite)
             }
+
+            if(game.isTankPlacementStage){
+                val ob : VisualObjectCompositor<RenderingContext> = object : VisualObjectCompositor<RenderingContext>() {
+                    override val renderer: IVisualObjectRenderer<RenderingContext>
+                        get() = object : SwingObjectRenderer {
+                            override fun render(graphics: Graphics, camera: SwingDefaultCamera) {
+
+                            }
+                        } as IVisualObjectRenderer<RenderingContext>
+
+                    override fun update(input: IInput) {
+
+                        super.update(input)
+                        contextSync {
+                        for(pm in game.objects.filterIsInstance<PlacementSet>().filter { it.owner == owner }){
+
+                            if(pm.uniqueChar in input.keyPressed) {
+                                for (x in -50..50) {
+                                    for (y in -50..50) {
+                                        val action = TankPlacement(pm.objectID, Vector2(x, y), Orientation.UP)
+                                        try {
+                                            action.invoke(game, true)
+                                            val pointer = PositionalObject<RenderingContext>(factory, "act_move.png") {
+                                                contextSync {
+                                                    removeMarkers()
+                                                    for(dir in Orientation.values()) {
+                                                        val rotPtr = PositionalObject<RenderingContext>(
+                                                            factory,
+                                                            "act_move.png"
+                                                        ) {
+                                                            contextSync {
+                                                                action.dir = dir
+                                                                applyMyAction(action, lastSequence)
+                                                            }
+                                                        }
+                                                        rotPtr.transform.position = Vector3(Vector2(x, y) + dir.direction)
+                                                        scene.childs.add(rotPtr)
+                                                    }
+                                                    return@contextSync null
+                                                }
+                                            }
+                                            pointer.transform.position = Vector3(x.toDouble(), y.toDouble())
+                                            scene.childs.add(pointer)
+                                            markers.add(pointer)
+                                            logInfo(this, "Can place at $x $y")
+
+                                        } catch (ex: IllegalActionException) {
+                                            logWarning(this, "Cannot place $x $y reason - ${ex.message}")
+                                        }
+                                    }
+                                }
+
+                                input.keyPressed.remove(pm.uniqueChar)
+                            }
+                            }
+                        }
+                    }
+                }
+                scene.childs.add(ob)
+            }
+
         }
     }
 
