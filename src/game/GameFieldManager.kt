@@ -7,9 +7,21 @@ import game.tools.Vector2
 import game.units.Obstacle
 import game.units.tanks.Tank
 
-class GameFieldManager(var gameState: GameState, val minPlayersForStart: Int = 2) {
-    var playersConnected = 0
+class GameFieldData(
+    val playerCount : Int,
+    val width : Int,
+    val height : Int,
+    val data : Array<String>,
+    val lCount : Int= 2,
+    val mCount : Int = 2,
+    val hCount : Int = 2
+){
+}
 
+
+class GameFieldManager(var gameState: GameState, val data: GameFieldData) {
+    var playersConnected = 0
+    val minPlayersForStart = data.playerCount
     var currentMovePlayerIndex = 0
     var gamePlayerIds = arrayListOf<Int>()
 
@@ -41,63 +53,28 @@ class GameFieldManager(var gameState: GameState, val minPlayersForStart: Int = 2
         playersConnected++
         preliminaryActions.addAction(ObjectsCreated(player))
 
-        if(playersConnected == 1){
 
-            addPrelimObject(Obstacle(game.vacantID(), Vector2(-5, 4)))
-            addPrelimObject(Obstacle(game.vacantID(), Vector2(-4, 3)))
-            addPrelimObject(Obstacle(game.vacantID(), Vector2(-4, 4)))
-            addPrelimObject(Obstacle(game.vacantID(), Vector2(-4, 6)))
-            addPrelimObject(Obstacle(game.vacantID(), Vector2(-3, 6)))
-            addPrelimObject(Obstacle(game.vacantID(), Vector2(-2, 3)))
-            addPrelimObject(Obstacle(game.vacantID(), Vector2(-2, 6)))
-            addPrelimObject(Obstacle(game.vacantID(), Vector2(-2, 7)))
-            addPrelimObject(Obstacle(game.vacantID(), Vector2(-1, 3)))
-            addPrelimObject(Obstacle(game.vacantID(), Vector2(0, 5)))
-            addPrelimObject(Obstacle(game.vacantID(), Vector2(1, 3)))
-            addPrelimObject(Obstacle(game.vacantID(), Vector2(2, 3)))
-            addPrelimObject(Obstacle(game.vacantID(), Vector2(2, 6)))
-            addPrelimObject(Obstacle(game.vacantID(), Vector2(2, 7)))
-            addPrelimObject(Obstacle(game.vacantID(), Vector2(3, 3)))
-            addPrelimObject(Obstacle(game.vacantID(), Vector2(3, 4)))
-            addPrelimObject(Obstacle(game.vacantID(), Vector2(3, 7)))
-        }
-/*
-        for (ypos in 1..5) {
-            var tankPosition: Vector2
 
-            if (playersConnected == 1) {
-                tankPosition = Vector2(-2 + ypos, 0)
-            } else {
-                tankPosition = Vector2(-2 + ypos, 10)
+            for(x in 0 until data.width){
+                for(y in 0 until data.height){
+                    val pos = Vector2(x - data.width/2,data.height/2 -y)
+                    if(playersConnected == 1) {
+                        if (data.data[y][x] == '#') {
+                            addPrelimObject(Obstacle(game.vacantID(), pos))
+                        }
+                    }
+
+                    if(data.data[y][x] == playersConnected.toString()[0]){
+                        addPrelimObject(PlacementArea(game.vacantID(), player.objectID, pos.x, pos.x, pos.y,pos.y))
+                    }
+                }
             }
 
-            val tank = Tank(
-                objectID = game.vacantID(),
-                position = tankPosition,
-                damage = 2U,
-                moveDistance = 4,
-                health = 4,
-                playerID = player.objectID,
-                orientation = if (playersConnected == 1) Orientation.UP else Orientation.DOWN
-            )
 
 
-            game.objects.add(tank)
-            tank.linkIdentifiers(game)
-
-
-            preliminaryActions.addAction(ObjectsCreated(tank))
-        }
-*/
-        if(playersConnected == 1){
-            addPrelimObject(PlacementArea(game.vacantID(), player.objectID, -2, 2, 0, 1))
-        }else{
-            addPrelimObject(PlacementArea(game.vacantID(), player.objectID, -2, 2, 10, 11))
-        }
-
-        addPrelimObject(LightPlacementSet(game.vacantID(), player.objectID, 2, 'L'))
-        addPrelimObject(HeavyPlacementSet(game.vacantID(), player.objectID, 2, 'H'))
-        addPrelimObject(MiddlePlacementSet(game.vacantID(), player.objectID, 2, 'M'))
+        addPrelimObject(LightPlacementSet(game.vacantID(), player.objectID, data.lCount, 'L'))
+        addPrelimObject(HeavyPlacementSet(game.vacantID(), player.objectID, data.hCount, 'H'))
+        addPrelimObject(MiddlePlacementSet(game.vacantID(), player.objectID, data.mCount, 'M'))
 
         if (playersConnected == minPlayersForStart) {
             preliminaryActions.addAction(GameStarted())

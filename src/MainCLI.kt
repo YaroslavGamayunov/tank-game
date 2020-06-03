@@ -2,13 +2,14 @@ import game.DebugServerProcessor
 import game.GameServerProcessor
 import game.controllers.*
 import server.Server
+import java.io.File
 import java.net.InetAddress
 import java.net.Socket
 
 fun viewDocs(){
     println("This it Tank Game developed by Yaroslav G. Gregory M. Dmitriy P.");
     println("Use: -help \t to view this guide");
-    println("Use: -server [port]\t to run server");
+    println("Use: -server [port] (-loadField [filename])\t to run server");
     println("Use: -client [nickname] [server:port] [cli|gui]\t to run connect to the server");
     println()
 }
@@ -26,7 +27,24 @@ fun main(args: Array<String>) {
         "-server"->{
             if(args.size < 2) return viewDocs()
             val port = args[1].toInt()
-            val server = Server(port, GameServerProcessor())
+
+            var serverArgs = args.slice(2 until args.size)
+            var file : File? = null
+            while(serverArgs.isNotEmpty()){
+                when(serverArgs[0]){
+                    "-loadField"->{
+                       file = File(serverArgs[1])
+                       serverArgs = serverArgs.slice(2 until serverArgs.size)
+                    }
+                    else->{
+                        return viewDocs()
+                    }
+                }
+            }
+
+
+            val server = Server(port, GameServerProcessor(file))
+
         }
 
         "-debugServer"->{

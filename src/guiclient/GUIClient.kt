@@ -197,10 +197,8 @@ class GUIClient<RenderingContext : IRenderingContext>(server: IGameServerConnect
                                             pointer.transform.position = Vector3(x.toDouble(), y.toDouble())
                                             scene.childs.add(pointer)
                                             markers.add(pointer)
-                                            logInfo(this, "Can place at $x $y")
 
                                         } catch (ex: IllegalActionException) {
-                                            logWarning(this, "Cannot place $x $y reason - ${ex.message}")
                                         }
                                     }
                                 }

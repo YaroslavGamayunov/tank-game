@@ -8,19 +8,48 @@ import server.validation.PlayerActionsValidator
 import server.validation.PacketPayloadValidator
 import server.validation.ServerPacketValidationException
 import server.validation.ServerPacketValidatorChain
+import java.io.File
+import java.io.InputStream
 import java.net.InetAddress
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-open class GameServerProcessor() : ServerIncomingPacketProcessor {
+open class GameServerProcessor(fieldDataFile : File? = null) : ServerIncomingPacketProcessor {
     private var playerIdByAddr = HashMap<InetAddress, String>()
     protected var globalGameState = GameState().apply { game = Game() }
     private val validatorChain =
             ServerPacketValidatorChain(PacketPayloadValidator(), PlayerActionsValidator(globalGameState.game!!))
-    private var fieldManager = createGameField()
+    private var fieldManager = createGameField(fieldDataFile)
 
-    protected open fun createGameField() : GameFieldManager{
-        return GameFieldManager(globalGameState)
+    protected open fun createGameField(file : File? = null) : GameFieldManager{
+        var data : GameFieldData
+        if(file != null){
+            val inputStream: InputStream = file.inputStream()
+            val lineList = mutableListOf<String>()
+            inputStream.bufferedReader().forEachLine { lineList.add(it) }
+            val array = lineList.slice(6 until lineList.size).toTypedArray()
+            data = GameFieldData(lineList[0].toInt(), lineList[1].toInt(), lineList[2].toInt(), array, lineList[3].toInt(), lineList[4].toInt(), lineList[5].toInt())
+        }else{
+            data = GameFieldData(
+                playerCount = 2,
+                width = 10,
+                height = 10,
+                data = arrayOf(
+                    "##########",
+                    "#222#2222#",
+                    "#2#####22#",
+                    "#        #",
+                    "# #  # # #",
+                    "#     #  #",
+                    "#  #     #",
+                    "#11####11#",
+                    "#11111111#",
+                    "##########"
+
+                ))
+        }
+
+        return GameFieldManager(globalGameState, data)
     }
 
     override fun onReceive(connection: ServerConnection, packet: ServerPacket): List<BroadcastPacket> {
